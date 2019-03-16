@@ -4,7 +4,7 @@ public class Token {
 
 	public enum Kind {
 		
-		FOR, IF, WHILE, ELSE, ID,PRIVATE, PUBLIC, INT, CHAR, FLOAT, DOUBLE, DEL, OP_LOG, OP_ARITHM, OP_REL, OTHER
+		FOR, IF, WHILE, ELSE, ID,PRIVATE, PUBLIC, INT, CHAR, FLOAT, DEL, OP_LOG, OP_ARITHM, OP_REL, OTHER
 		
 	}
 
@@ -61,7 +61,9 @@ public class Token {
 
 	@Override
 	public String toString() {
-		return "Token [line=" + line + ", value=" + value + ", kind=" + kind + "]";
+		return "Token [kind= " + kind + ", line= " + line + ", value= " + value + ", describe= " + describe + "]\n";
 	}
+
+
 
 }
