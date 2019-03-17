@@ -1,10 +1,7 @@
 package br.ufc.compiler.cpp;
 
 import java.io.IOException;
-
 import br.ufc.compiler.lexicon.LexiconAnalyzer;
-import br.ufc.compiler.lexicon.Token;
-import br.ufc.compiler.lexicon.Util;
 
 public class Main {
 
