@@ -9,9 +9,9 @@ public class SymbolConsumer {
 	public SymbolConsumer(LinkedHashSet<Token> hm) {
 		this.hm = hm;
 	}
-	
+
 	private LinkedHashSet<Token> hm;
-	
+
 	protected void treatmentDelimiter(char c, int line) {
 
 		switch (c) {
@@ -36,7 +36,7 @@ public class SymbolConsumer {
 			break;
 		case ';':
 			hm.add(new Token(Kind.DEL, "COMMA", line));
-			break;	
+			break;
 		case '@':
 			hm.add(new Token(Kind.OTHER, "@", line));
 			break;
@@ -47,8 +47,7 @@ public class SymbolConsumer {
 			hm.add(new Token(Kind.OTHER, "$", line));
 			break;
 		default:
-			
-			
+
 		}
 
 	}
@@ -75,72 +74,67 @@ public class SymbolConsumer {
 
 	}
 
-	protected int treatmentRelational(char c,String str,int i, int row) {
-		
-		String operator = String.valueOf(c);		
-		if((i + 1) < str.length())
-			 operator = operator.concat(String.valueOf(str.charAt(i + 1)));
-		
-		switch(c) {
-		
-		case '>':
-		{  
-			if (operator.equals(">=")) { 
-				 hm.add(new Token(Kind.OP_REL, ">=", row));  
-			     return i + 1;
-			}else 
-	           	hm.add(new Token(Kind.OP_REL, ">", row));
-		       
-		  return i;
-		}
-		
-		case '=':
-		{
-		
-			if (operator.equals("==")) { 
-				 hm.add(new Token(Kind.OP_REL, "==", row));   
-			   return i + 1;
-			}else 
-				 hm.add(new Token(Kind.OTHER, "ATRIB", row));
-			
+	protected int treatmentRelational(char c, String str, int i, int row) {
+
+		String operator = String.valueOf(c);
+		if ((i + 1) < str.length())
+			operator = operator.concat(String.valueOf(str.charAt(i + 1)));
+
+		switch (c) {
+
+		case '>': {
+			if (operator.equals(">=")) {
+				hm.add(new Token(Kind.OP_REL, ">=", row));
+				return i + 1;
+			} else
+				hm.add(new Token(Kind.OP_REL, ">", row));
+
 			return i;
 		}
-		
-		case '<':
-		{
-			  if (operator.equals("<=")) { 
-				  hm.add(new Token(Kind.OP_REL, "<=", row));
-			  return i + 1;
-			}else 
-				 hm.add(new Token(Kind.OP_REL, "<", row));
-			
+
+		case '=': {
+
+			if (operator.equals("==")) {
+				hm.add(new Token(Kind.OP_REL, "==", row));
+				return i + 1;
+			} else
+				hm.add(new Token(Kind.OTHER, "ATRIB", row));
+
 			return i;
 		}
-		
-		case '!':
-		{
-		
-			 if (operator.equals("!=")) { 
-				hm.add(new Token(Kind.OP_REL, "!=", row));	
-			 return i + 1;
-			}else 
+
+		case '<': {
+			if (operator.equals("<=")) {
+				hm.add(new Token(Kind.OP_REL, "<=", row));
+				return i + 1;
+			} else
+				hm.add(new Token(Kind.OP_REL, "<", row));
+
+			return i;
+		}
+
+		case '!': {
+
+			if (operator.equals("!=")) {
+				hm.add(new Token(Kind.OP_REL, "!=", row));
+				return i + 1;
+			} else
 				hm.add(new Token(Kind.OP_REL, "!", row));
-			
+
 			return i;
-		}	
+		}
 		default:
-			
+
+		}
+		return i;
 	}
-		return i; 
-}
 
 	protected void treatmentNumbers(StringBuilder sb, int row) {
 
 		if (Util.isNumberFloat(sb.toString()))
 			hm.add(new Token(Kind.FLOAT, Double.parseDouble(sb.toString()), "FLOAT", row));
 		else if (Util.isNumberInteger(sb.toString()))
-			hm.add(new Token(Kind.INT, Integer.parseInt(sb.toString()), "INT", row));	
+			hm.add(new Token(Kind.INT, Integer.parseInt(sb.toString()), "INT", row));
 	}
 
-	
 }

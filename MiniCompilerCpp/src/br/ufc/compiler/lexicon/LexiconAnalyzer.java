@@ -11,7 +11,7 @@ public class LexiconAnalyzer {
 	private LinkedHashSet<Token> hm = new LinkedHashSet<>();
 	private StringBuilder sb = new StringBuilder();
 	private SymbolConsumer sc = new SymbolConsumer(hm);
-	
+
 	@SuppressWarnings("resource")
 	public void builderSymbolTable(String path) throws IOException {
 
@@ -34,39 +34,39 @@ public class LexiconAnalyzer {
 	}
 
 	private void collectLines(String line, int row) {
-	
+
 		String ch;
-		
+
 		for (int i = 0; i < line.length(); i++) {
 
-			 char c = line.charAt(i);
-			 	 
-		   if (!Character.isWhitespace(c) || !Character.isSpaceChar(c)){
-			   
-			   ch = String.valueOf(c);
-			   
-			    if(Util.isOpLogic(ch)) 
-		            i = sc.treatmentRelational(c,line, i, row);
-			    else if(Util.isOpArithm(ch)) 
+			char c = line.charAt(i);
+
+			if (!Character.isWhitespace(c) || !Character.isSpaceChar(c)) {
+
+				ch = String.valueOf(c);
+
+				if (Util.isOpLogic(ch))
+					i = sc.treatmentRelational(c, line, i, row);
+				else if (Util.isOpArithm(ch))
 					sc.treatmentArithms(c, row);
-				else if(Util.isDelimiter(ch)) 
+				else if (Util.isDelimiter(ch))
 					sc.treatmentDelimiter(c, row);
-					   
+
 				if (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_' || c == '.') {
-					sb.append(c);	
-					
-				}else {
+					sb.append(c);
+
+				} else {
 					sc.treatmentNumbers(sb, row);
 					sb.setLength(0);
 				}
-				  
-			}else{
-				  sc.treatmentNumbers(sb, row);
-				  sb.setLength(0);
+
+			} else {
+				sc.treatmentNumbers(sb, row);
+				sb.setLength(0);
 			}
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "LexiconAnalyzer [hm= " + hm + "]";
