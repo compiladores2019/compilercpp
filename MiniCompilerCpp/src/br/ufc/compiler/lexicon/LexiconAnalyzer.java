@@ -12,7 +12,7 @@ public class LexiconAnalyzer {
 	private StringBuilder sb = new StringBuilder();
 	private SymbolConsumer sc = new SymbolConsumer(hm);
 
-	protected boolean commentActivate = false;
+	protected boolean commentActivated = false;
 	
 	@SuppressWarnings("resource")
 	public void builderSymbolTable(String path) throws IOException {
@@ -35,50 +35,44 @@ public class LexiconAnalyzer {
 		br.close();
 	}
 
-	private void collectLines(String line, int row) {
+ private void collectLines(String line, int row) {
 
-		String ch="";
+		String ch = null;
 
 		for (int i = 0; i < line.length(); i++) {
 
-			char c = line.charAt(i);
-			ch = String.valueOf(c);
-			
-			if (!Character.isSpaceChar(c) && !commentActivate){
-
-				if(ch.matches("/"))
+		char c = line.charAt(i);
+				
+		if (!Character.isSpaceChar(c) && !commentActivated){
+				 ch = String.valueOf(c);
+				    
+				if(ch.matches("/") || ch.matches("[*]")) 
 					i = sc.treatmentComment(this, c, line, i, row);
 				else
-				if (Util.isOpLogic(ch)) {		
-					i = sc.treatmentRelational(c, line, i, row);
+				if (Util.isOpLogic(ch)) {	
 					verifyLexeme(row);
-					sb.setLength(0);
-					
+					i = sc.treatmentRelational(c, line, i, row);		
 				}else if (Util.isOpArithm(ch)) {
-		
-					sc.treatmentArithms(c, row);
-		            verifyLexeme(row);
-					sb.setLength(0);
-				}else if (Util.isDelimiter(ch)) {
-
-					sc.treatmentDelimiter(c, row);
 					verifyLexeme(row);
-					sb.setLength(0);
+					sc.treatmentArithms(c, row);
+		            
+				}else if (Util.isDelimiter(ch)){
+					verifyLexeme(row);
+					sc.treatmentDelimiter(c, row);
+					
 				}
 				
 			if (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_' || c == '.')
 				sb.append(c);
 	   
-		 }else if(!commentActivate) 
+		 }else 
+			 if(!commentActivated) 
 			      verifyLexeme(row);
-			   
-			   if(commentActivate)
-			   i = sc.treatmentComment(this, c, line, i, row);
+			 else if(commentActivated)
+				  i = sc.treatmentComment(this, c, line, i, row);
 		}
-		  if(!commentActivate)
-		    verifyLexeme(row);   
-		  
-		 
+		  if(!commentActivated)
+		    verifyLexeme(row);   	 
 	}
 
 	private void verifyLexeme(int row) {
@@ -92,7 +86,11 @@ public class LexiconAnalyzer {
 			    sc.treatmentIndetifier(sb, row);
 			else 
 				sc.treatmentNumbers(sb, row);	
+		 
+		 sb.setLength(0);
 	}
+	
+	public LinkedHashSet<Token> getSymbolTable(){return this.hm;}
 	
 	@Override
 	public String toString() {

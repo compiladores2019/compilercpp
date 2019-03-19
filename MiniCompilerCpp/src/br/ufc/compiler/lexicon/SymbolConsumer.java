@@ -14,39 +14,46 @@ public class SymbolConsumer {
 
     protected void treatmentRW(StringBuilder sb,int line){
     	
-    	String op = sb.toString();
-    	
-    	switch (op) {
-		
-    	case "for":
-			hm.add(new Token(Kind.FOR,"FOR",line));
+		String op = sb.toString();
+
+		switch (op) {
+
+		case "for":
+			hm.add(new Token(Kind.FOR, "FOR", line));
 			break;
-    	case "while":
-			hm.add(new Token(Kind.WHILE,"WHILE",line));
+			
+		case "while":
+			hm.add(new Token(Kind.WHILE, "WHILE", line));
 			break;
-    	case "if":
-			hm.add(new Token(Kind.IF,"IF",line));
+			
+		case "if":
+			hm.add(new Token(Kind.IF, "IF", line));
 			break;
-    	case "else":
-			hm.add(new Token(Kind.ELSE,"ELSE",line));
+			
+		case "else":
+			hm.add(new Token(Kind.ELSE, "ELSE", line));
 			break;
-    	case "main":
-			hm.add(new Token(Kind.MAIN,"MAIN",line));
+			
+		case "main":
+			hm.add(new Token(Kind.MAIN, "MAIN", line));
 			break;
-    	case "int":
-			hm.add(new Token(Kind.INT,"INT",line));
+			
+		case "int":
+			hm.add(new Token(Kind.INT, "INT", line));
 			break;
-    	case "char":
-			hm.add(new Token(Kind.CHAR,"CHAR",line));
+			
+		case "char":
+			hm.add(new Token(Kind.CHAR, "CHAR", line));
 			break;
-    	case "float":
-			hm.add(new Token(Kind.FLOAT,"FLOAT",line));
+			
+		case "float":
+			hm.add(new Token(Kind.FLOAT, "FLOAT", line));
 			break;
-		
+			
 		default:
 			break;
 		}
-    	sb.setLength(0);
+		sb.setLength(0);
     }
 	
 	protected void treatmentDelimiter(char c, int line) {
@@ -56,44 +63,52 @@ public class SymbolConsumer {
 		case '(':
 			hm.add(new Token(Kind.DEL, "PARLFT", line));
 			break;
+			
 		case ')':
 			hm.add(new Token(Kind.DEL, "PARRGH", line));
 			break;
+			
 		case '{':
 			hm.add(new Token(Kind.DEL, "KEYLFT", line));
 			break;
 		case '}':
 			hm.add(new Token(Kind.DEL, "KEYRGH", line));
 			break;
+			
 		case '[':
 			hm.add(new Token(Kind.DEL, "BKTLFT", line));
 			break;
+			
 		case ']':
 			hm.add(new Token(Kind.DEL, "BKTRGH", line));
 			break;
+			
 		case ';':
 			hm.add(new Token(Kind.DEL, "COMMA", line));
 			break;
 		case '@':
 			hm.add(new Token(Kind.OTHER, "@", line));
 			break;
+			
 		case '#':
 			hm.add(new Token(Kind.OTHER, "#", line));
 			break;
 			
 		default:
+			hm.add(new Token(Kind.OTHER, "UNKNOW", line));
+			break;
 		}
 	}
 
-	protected void treamentmentModifier(StringBuilder sb,int line) {
-		
+	protected void treamentmentModifier(StringBuilder sb, int line) {
+
 		String op = sb.toString();
-		
-		if(op.equals("public"))
-			hm.add(new Token(Kind.PUBLIC,"PUBLIC",line));
-		else if(op.equals("private"))
-			hm.add(new Token(Kind.PRIVATE,"PRIVATE",line));
-		   
+
+		if (op.equals("public"))
+			hm.add(new Token(Kind.PUBLIC, "PUBLIC", line));
+		else if (op.equals("private"))
+			hm.add(new Token(Kind.PRIVATE, "PRIVATE", line));
+
 		sb.setLength(0);
 	}
 	
@@ -104,21 +119,20 @@ public class SymbolConsumer {
 		case '+':
 			hm.add(new Token(Kind.OP_ARITHM, "SUM_OP", line));
 			break;
+			
 		case '-':
-		{
 			hm.add(new Token(Kind.OP_ARITHM, "SUB_OP", line));
 			break;
-		}
+	
 		case '/':
 			hm.add(new Token(Kind.OP_ARITHM, "DIV_OP", line));
 			break;
+			
 		case '*':
 			hm.add(new Token(Kind.OP_ARITHM, "MULT_OP", line));
 			break;
 		default:
-
 		}
-
 	}
 
 	protected int treatmentRelational(char c, String str, int i, int row) {
@@ -135,19 +149,16 @@ public class SymbolConsumer {
 				return i + 1;
 			} else
 				hm.add(new Token(Kind.OP_REL, ">", row));
-
-			return i;
+			break;
 		}
 
 		case '=': {
-
 			if (operator.equals("==")) {
 				hm.add(new Token(Kind.OP_REL, "==", row));
 				return i + 1;
 			} else
 				hm.add(new Token(Kind.OTHER, "ATRIB", row));
-
-			return i;
+            break;
 		}
 
 		case '<': {
@@ -156,22 +167,17 @@ public class SymbolConsumer {
 				return i + 1;
 			} else
 				hm.add(new Token(Kind.OP_REL, "<", row));
-
-			return i;
+             break;
 		}
 
 		case '!': {
-
 			if (operator.equals("!=")) {
 				hm.add(new Token(Kind.OP_REL, "!=", row));
 				return i + 1;
 			} else
 				hm.add(new Token(Kind.OP_LOG, "!", row));
-
-			return i;
 		}
 		default:
-
 		}
 		return i;
 	}
@@ -203,23 +209,26 @@ public class SymbolConsumer {
 		
 		case '/':
 		{
-			if(str.equals("//")) 
-                 return com.length() - 1;
+			if(str.equals("//")) return com.length() - 1;
 			else if(str.equals("/*")) {
-				ln.commentActivate = true;
-				return i + 1;
-			}else return i;
+				ln.commentActivated = true;
+		   }else if(str.equals("/"))
+			     hm.add(new Token(Kind.OP_ARITHM,"DIV_OP",row));
+			
+			return i + 1;
 		}
 		case '*':
-			if(str.equals("*/")) {
-				ln.commentActivate = false;
-				return i + 1;
-			}
-
+		{    
+			  if(str.equals("*/")) {
+				ln.commentActivated = false;
+				 return i + 1;
+			  }else if(str.contains("*"))
+				  	  hm.add(new Token(Kind.OP_ARITHM,"MULT_OP",row));
+			  
+			  return i + 1;	
+		}	
 		default:
-			break;
-		}
-        return i;
-	}
-	
+		} 
+		return i;
+    }
 }

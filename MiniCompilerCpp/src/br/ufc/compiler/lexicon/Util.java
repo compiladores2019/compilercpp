@@ -19,7 +19,7 @@ public class Util {
 	}
 
 	public static boolean isDelimiter(String simbol) {
-		return simbol.matches("[(,),{,},;,@,#]");
+		return simbol.matches("[(,),{,},;,@,#,:]");
 	}
 
 	public static boolean isIdentifier(String id) {
