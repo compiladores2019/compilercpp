@@ -212,20 +212,20 @@ public class SymbolConsumer {
 			if(str.equals("//")) return com.length() - 1;
 			else if(str.equals("/*")) {
 				ln.commentActivated = true;
+				return i + 1;
 		   }else if(str.equals("/"))
 			     hm.add(new Token(Kind.OP_ARITHM,"DIV_OP",row));
-			
-			return i + 1;
+		   break;	
 		}
 		case '*':
 		{    
 			  if(str.equals("*/")) {
 				ln.commentActivated = false;
-				 return i + 1;
-			  }else if(str.contains("*"))
+				return i + 1;	
+			  }else if(str.matches("[*]+([a-zA-z]*|[0-9]*)*"));
 				  	  hm.add(new Token(Kind.OP_ARITHM,"MULT_OP",row));
 			  
-			  return i + 1;	
+			 break;
 		}	
 		default:
 		} 

@@ -2,6 +2,7 @@ package br.ufc.compiler.cpp;
 
 import java.io.IOException;
 import br.ufc.compiler.lexicon.LexiconAnalyzer;
+import br.ufc.compiler.lexicon.Token;
 
 public class Main {
 
@@ -11,7 +12,9 @@ public class Main {
     
      ln.builderSymbolTable("/home/rafael/Documents/test.txt");
      
-     System.out.println(ln.toString());
+     for(Token t: ln.getSymbolTable())
+    	 System.out.print(t);
+    	
      
 	}
 

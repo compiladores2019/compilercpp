@@ -59,12 +59,13 @@ public class LexiconAnalyzer {
 				}else if (Util.isDelimiter(ch)){
 					verifyLexeme(row);
 					sc.treatmentDelimiter(c, row);
-					
-				}
+                  }
 				
-			if (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_' || c == '.')
-				sb.append(c);
-	   
+			if (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_' || c == '.') 
+				  sb.append(c);
+			   else 
+				   verifyLexeme(row);
+		 
 		 }else 
 			 if(!commentActivated) 
 			      verifyLexeme(row);
@@ -81,8 +82,7 @@ public class LexiconAnalyzer {
 		    	sc.treatmentRW(sb, row);
 		    else if(Util.isModifier(sb.toString()))
 		    	sc.treamentmentModifier(sb, row);
-		    else
-			if(Util.isIdentifier(sb.toString()))
+		    else if(Util.isIdentifier(sb.toString()))
 			    sc.treatmentIndetifier(sb, row);
 			else 
 				sc.treatmentNumbers(sb, row);	
