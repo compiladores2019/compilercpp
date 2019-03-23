@@ -11,15 +11,15 @@ public class Util {
 	}
 
 	public static boolean isOther(String other) {
-		return other.matches("#|@|&");
+		return other.matches("#|@");
 	}
 
 	public static boolean isOpArithm(String op) {
 		return op.matches("[+|/|*]") || op.matches("[-]");
 	}
 
-	public static boolean isDelimiter(String simbol) {
-		return simbol.matches("[(,),{,},;,@,#,:]");
+	public static boolean isDelimiter(String symbol) {
+		return symbol.matches("[(,),{,},;,@,#,:]") || symbol.matches(",");
 	}
 
 	public static boolean isIdentifier(String id) {
@@ -27,7 +27,7 @@ public class Util {
 	}
 
 	public static boolean isOpLogic(String opLogic) {
-		return opLogic.matches("<|>|<=|>=|==|!=|!|=");
+		return opLogic.matches("<|>|<=|>=|==|!=|!|=|&") || opLogic.matches("[|]");
 	}
 
 	public static boolean isReservedWord(String rw){
@@ -37,5 +37,5 @@ public class Util {
 	public static boolean isModifier(String mod) {
 		return mod.matches("private|public");
 	}
-	
+
 }

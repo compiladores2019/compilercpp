@@ -10,7 +10,7 @@ public class Main {
 		
      LexiconAnalyzer ln = new LexiconAnalyzer();
     
-     ln.builderSymbolTable("/home/rafael/Documents/test.txt");
+     ln.builderSymbolTable("/home/rafael/Documents/test.cpp");
      
      for(Token t: ln.getSymbolTable())
     	 System.out.print(t);

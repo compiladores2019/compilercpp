@@ -19,35 +19,35 @@ public class SymbolConsumer {
 		switch (op) {
 
 		case "for":
-			hm.add(new Token(Kind.FOR, "FOR", line));
+			hm.add(new Token(Kind.FOR, op,"RSVD_WORD", line));
 			break;
 			
 		case "while":
-			hm.add(new Token(Kind.WHILE, "WHILE", line));
+			hm.add(new Token(Kind.WHILE,op,"RSVD_WORD", line));
 			break;
 			
 		case "if":
-			hm.add(new Token(Kind.IF, "IF", line));
+			hm.add(new Token(Kind.IF, op,"RSVD_WORD", line));
 			break;
 			
 		case "else":
-			hm.add(new Token(Kind.ELSE, "ELSE", line));
+			hm.add(new Token(Kind.ELSE, op,"RSVD_WORD", line));
 			break;
 			
 		case "main":
-			hm.add(new Token(Kind.MAIN, "MAIN", line));
+			hm.add(new Token(Kind.MAIN, op,"RSVD_WORD", line));
 			break;
 			
 		case "int":
-			hm.add(new Token(Kind.INT, "INT", line));
+			hm.add(new Token(Kind.INT, op,"RSVD_WORD", line));
 			break;
 			
 		case "char":
-			hm.add(new Token(Kind.CHAR, "CHAR", line));
+			hm.add(new Token(Kind.CHAR,op,"RSVD_WORD", line));
 			break;
 			
 		case "float":
-			hm.add(new Token(Kind.FLOAT, "FLOAT", line));
+			hm.add(new Token(Kind.FLOAT, op,"RSVD_WORD", line));
 			break;
 			
 		default:
@@ -61,41 +61,45 @@ public class SymbolConsumer {
 		switch (c) {
 
 		case '(':
-			hm.add(new Token(Kind.DEL, "PARLFT", line));
+			hm.add(new Token(Kind.DEL,"(", "PARLFT", line));
 			break;
 			
 		case ')':
-			hm.add(new Token(Kind.DEL, "PARRGH", line));
+			hm.add(new Token(Kind.DEL,")", "PARRGH", line));
 			break;
 			
 		case '{':
-			hm.add(new Token(Kind.DEL, "KEYLFT", line));
+			hm.add(new Token(Kind.DEL,"{", "KEYLFT", line));
 			break;
 		case '}':
-			hm.add(new Token(Kind.DEL, "KEYRGH", line));
+			hm.add(new Token(Kind.DEL,"}" ,"KEYRGH", line));
 			break;
 			
 		case '[':
-			hm.add(new Token(Kind.DEL, "BKTLFT", line));
+			hm.add(new Token(Kind.DEL,"[", "BKTLFT", line));
 			break;
 			
 		case ']':
-			hm.add(new Token(Kind.DEL, "BKTRGH", line));
+			hm.add(new Token(Kind.DEL,"]", "BKTRGH", line));
 			break;
 			
 		case ';':
-			hm.add(new Token(Kind.DEL, "COMMA", line));
+			hm.add(new Token(Kind.DEL,";","DELIMITER", line));
 			break;
+			
+		case ',':
+			hm.add(new Token(Kind.DEL,",","COMMA", line));
+			break;	
+			
 		case '@':
-			hm.add(new Token(Kind.OTHER, "@", line));
+			hm.add(new Token(Kind.OTHER, "@","OTHER", line));
 			break;
 			
 		case '#':
-			hm.add(new Token(Kind.OTHER, "#", line));
+			hm.add(new Token(Kind.OTHER, "#", "OTHER", line));
 			break;
 			
 		default:
-			hm.add(new Token(Kind.OTHER, "UNKNOW", line));
 			break;
 		}
 	}
@@ -105,9 +109,9 @@ public class SymbolConsumer {
 		String op = sb.toString();
 
 		if (op.equals("public"))
-			hm.add(new Token(Kind.PUBLIC, "PUBLIC", line));
+			hm.add(new Token(Kind.PUBLIC, op, "RSVD_WORD",line));
 		else if (op.equals("private"))
-			hm.add(new Token(Kind.PRIVATE, "PRIVATE", line));
+			hm.add(new Token(Kind.PRIVATE, op,"RSVD_WORD", line));
 
 		sb.setLength(0);
 	}
@@ -117,19 +121,19 @@ public class SymbolConsumer {
 		switch (c) {
 
 		case '+':
-			hm.add(new Token(Kind.OP_ARITHM, "SUM_OP", line));
+			hm.add(new Token(Kind.OP_ARITHM,"+", "SUM_OP", line));
 			break;
 			
 		case '-':
-			hm.add(new Token(Kind.OP_ARITHM, "SUB_OP", line));
+			hm.add(new Token(Kind.OP_ARITHM,"-", "SUB_OP", line));
 			break;
 	
 		case '/':
-			hm.add(new Token(Kind.OP_ARITHM, "DIV_OP", line));
+			hm.add(new Token(Kind.OP_ARITHM,"/","DIV_OP", line));
 			break;
 			
 		case '*':
-			hm.add(new Token(Kind.OP_ARITHM, "MULT_OP", line));
+			hm.add(new Token(Kind.OP_ARITHM,"*", "MULT_OP", line));
 			break;
 		default:
 		}
@@ -145,37 +149,58 @@ public class SymbolConsumer {
 
 		case '>': {
 			if (operator.equals(">=")) {
-				hm.add(new Token(Kind.OP_REL, ">=", row));
+				hm.add(new Token(Kind.OP_REL, ">=","REL_GE", row));
 				return i + 1;
 			} else
-				hm.add(new Token(Kind.OP_REL, ">", row));
+				hm.add(new Token(Kind.OP_REL, ">","REL_G", row));
 			break;
 		}
 
 		case '=': {
 			if (operator.equals("==")) {
-				hm.add(new Token(Kind.OP_REL, "==", row));
+				hm.add(new Token(Kind.OP_REL, "==","REL_EE", row));
 				return i + 1;
 			} else
-				hm.add(new Token(Kind.OTHER, "ATRIB", row));
+				hm.add(new Token(Kind.OTHER, "=","ATRIB", row));
             break;
 		}
 
 		case '<': {
 			if (operator.equals("<=")) {
-				hm.add(new Token(Kind.OP_REL, "<=", row));
+				hm.add(new Token(Kind.OP_REL, "<=","REL_LE", row));
 				return i + 1;
 			} else
-				hm.add(new Token(Kind.OP_REL, "<", row));
+				hm.add(new Token(Kind.OP_REL, "<", "REL_L",row));
              break;
 		}
 
 		case '!': {
 			if (operator.equals("!=")) {
-				hm.add(new Token(Kind.OP_REL, "!=", row));
+				hm.add(new Token(Kind.OP_REL, "!=","REL_NE", row));
 				return i + 1;
 			} else
-				hm.add(new Token(Kind.OP_LOG, "!", row));
+				hm.add(new Token(Kind.OP_LOG, "!","LOG_NOT", row));
+			break;
+		}
+		
+		case '&':
+		{
+			if(operator.equals("&&")) {
+				hm.add(new Token(Kind.OP_LOG,operator,"LOG_AND",row));
+				return i + 1;
+			}else
+				hm.add(new Token(Kind.OTHER,operator,"UNKNOW",row));
+			break;
+		}
+		
+		case '|':
+		{
+			if(operator.equals("||")) {
+				hm.add(new Token(Kind.OP_LOG,operator,"LOG_OR",row));
+				return i + 1;
+			}else
+				hm.add(new Token(Kind.OTHER,operator,"UNKOW",row));	
+			break;
 		}
 		default:
 		}
@@ -184,12 +209,13 @@ public class SymbolConsumer {
 
 	protected void treatmentNumbers(StringBuilder sb, int row) {
 
-		if (Util.isNumberFloat(sb.toString())) 
-			hm.add(new Token(Kind.FLOAT, Double.parseDouble(sb.toString()), "FLOAT", row));
-		else if (Util.isNumberInteger(sb.toString())) 
-			hm.add(new Token(Kind.INT, Integer.parseInt(sb.toString()), "INT", row));
-	
-		sb.setLength(0);
+		if (Util.isNumberFloat(sb.toString())) { 
+			hm.add(new Token(Kind.FLOAT, Double.parseDouble(sb.toString()), "FLOAT","RSVD_WORD", row));
+			sb.setLength(0);
+		}else if (Util.isNumberInteger(sb.toString())) {
+			hm.add(new Token(Kind.INT, Integer.parseInt(sb.toString()), "INT","RSVD_WORD",row));
+			sb.setLength(0);
+		}
 	}
 	
 	protected void treatmentIndetifier(StringBuilder sb,int row) {
@@ -214,7 +240,7 @@ public class SymbolConsumer {
 				ln.commentActivated = true;
 				return i + 1;
 		   }else if(str.equals("/"))
-			     hm.add(new Token(Kind.OP_ARITHM,"DIV_OP",row));
+			     hm.add(new Token(Kind.OP_ARITHM,"/", "DIV_OP",row));
 		   break;	
 		}
 		case '*':
@@ -223,12 +249,12 @@ public class SymbolConsumer {
 				ln.commentActivated = false;
 				return i + 1;	
 			  }else if(str.matches("[*]+([a-zA-z]*|[0-9]*)*"));
-				  	  hm.add(new Token(Kind.OP_ARITHM,"MULT_OP",row));
+				  	  hm.add(new Token(Kind.OP_ARITHM,"*","MULT_OP",row));
 			  
 			 break;
 		}	
 		default:
-		} 
+	  } 
 		return i;
     }
 }

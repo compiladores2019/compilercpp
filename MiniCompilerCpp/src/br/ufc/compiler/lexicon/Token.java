@@ -2,27 +2,38 @@ package br.ufc.compiler.lexicon;
 
 public class Token {
 
-	public enum Kind {
-	FOR, IF, WHILE, ELSE, ID,MAIN,PRIVATE, PUBLIC, INT, CHAR, FLOAT, DEL, OP_LOG, OP_ARITHM, OP_REL, OTHER		
+	protected enum Kind {
+	FOR, IF, WHILE, ELSE, ID,MAIN,PRIVATE, PUBLIC, INT, CHAR, FLOAT, DEL, OP_LOG, OP_ARITHM, OP_REL,OTHER		
  }
 
 	private Kind kind;
 	private int line;
 	private Object value;
+	private String lexeme;
 	private String describe;
 
-	public Token(Kind kind, String describe, int line) {
+	public Token(Kind kind,String lexeme, String describe, int line) {
 		this.kind = kind;
+		this.lexeme = lexeme;
 		this.line = line;
 		this.describe = describe;
 	}
 
-	public Token(Kind kind, Object value, String describe, int line) {
+	public Token(Kind kind, Object value,String lexeme, String describe, int line) {
 
 		this.kind = kind;
 		this.value = value;
+		this.lexeme = lexeme;
 		this.describe = describe;
 		this.line = line;
+	}
+
+	public Kind getKind() {
+		return kind;
+	}
+
+	public void setKind(Kind kind) {
+		this.kind = kind;
 	}
 
 	public int getLine() {
@@ -41,6 +52,14 @@ public class Token {
 		this.value = value;
 	}
 
+	public String getLexeme() {
+		return lexeme;
+	}
+
+	public void setLexeme(String lexeme) {
+		this.lexeme = lexeme;
+	}
+
 	public String getDescribe() {
 		return describe;
 	}
@@ -49,16 +68,8 @@ public class Token {
 		this.describe = describe;
 	}
 
-	public Kind getKind() {
-		return kind;
-	}
-
-	public void setKind(Kind kind) {
-		this.kind = kind;
-	}
-
 	@Override
 	public String toString() {
-		return "Token [kind= " + kind + ", line= " + line + ", value= " + value + ", describe= " + describe + "]\n";
+		return "Token [kind= " + kind + ", lexeme="+ lexeme + ", line= " + line + ", value= " + value + ", describe= " + describe + "]\n";
 	}
 }
