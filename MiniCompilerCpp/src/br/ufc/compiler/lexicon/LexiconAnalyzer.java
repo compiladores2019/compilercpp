@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 
+import br.ufc.compiler.exception.CommentException;
 import br.ufc.compiler.lexicon.Token.Kind;
 
 public class LexiconAnalyzer {
@@ -18,7 +19,7 @@ public class LexiconAnalyzer {
 	
     //O(2n) = O(n)
 	@SuppressWarnings("resource")
-	public void builderSymbolTable(String path) throws IOException {
+	public void builderSymbolTable(String path) throws IOException, CommentException {
 
 		File file = new File(path);
 		FileReader fr = new FileReader(file);
@@ -37,6 +38,9 @@ public class LexiconAnalyzer {
 
 		fr.close();
 		br.close();
+		
+		if(commentActivated)
+			throw new CommentException("Comment not close!");
 	}
 
     //O(n)
@@ -103,5 +107,4 @@ public class LexiconAnalyzer {
 	public String toString() {
 		return "LexiconAnalyzer [hm= " + hm + "]";
 	}
-
 }
