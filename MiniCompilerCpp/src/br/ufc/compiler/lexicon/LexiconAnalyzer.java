@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 
-import br.ufc.compiler.exception.CommentException;
+
 import br.ufc.compiler.lexicon.Token.Kind;
 
 public class LexiconAnalyzer {
@@ -15,17 +15,17 @@ public class LexiconAnalyzer {
 	private StringBuilder sb = new StringBuilder();
 	private SymbolConsumer sc = new SymbolConsumer(hm);
 
+	private int commentRow = 0;
 	protected boolean commentActivated = false;
 	
     //O(2n) = O(n)
 	@SuppressWarnings("resource")
-	public void builderSymbolTable(String path) throws IOException, CommentException {
+	public void builderSymbolTable(String path) throws IOException {
 
 		File file = new File(path);
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		int j = 0;
-
 		if (!file.exists()) {
 			throw new IOException("File not exists!");
 		}
@@ -34,13 +34,16 @@ public class LexiconAnalyzer {
 		while (br.ready()) {
 			String readLine = br.readLine();
 			collectLines(readLine, ++j);
+			
 		}
 
 		fr.close();
 		br.close();
 		
 		if(commentActivated)
-			throw new CommentException("Comment not close!");
+			System.out.println("Comment on line " + commentRow + " not closed!");
+			
+			
 	}
 
     //O(n)
@@ -56,8 +59,10 @@ public class LexiconAnalyzer {
 				  
 				ch = String.valueOf(c);
 				
-				if (ch.matches("/") || ch.matches("[*]"))
+				if (ch.matches("/") || ch.matches("[*]")){
 					i = sc.treatmentComment(this, c, line, i, row);
+					this.commentRow = row;
+				}
 				else if (Util.isOpLogic(ch)) {
 					verifyLexeme(row);
 					i = sc.treatmentRelational(c, line, i, row);

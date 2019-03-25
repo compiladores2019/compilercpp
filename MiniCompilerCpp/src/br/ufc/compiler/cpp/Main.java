@@ -2,13 +2,12 @@ package br.ufc.compiler.cpp;
 
 import java.io.IOException;
 
-import br.ufc.compiler.exception.CommentException;
 import br.ufc.compiler.lexicon.LexiconAnalyzer;
 import br.ufc.compiler.lexicon.Token;
 
 public class Main {
 
-	public static void main(String[] args) throws IOException, CommentException {
+	public static void main(String[] args) throws IOException {
 		
      LexiconAnalyzer ln = new LexiconAnalyzer();
     
