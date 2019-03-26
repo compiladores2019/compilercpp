@@ -103,7 +103,7 @@ public class LexiconAnalyzer {
 				i = sc.treatmentComment(this, c, line, i, row);	
 		}
 		if (!commentActivated)
-			verifyLexeme(row);
+		    verifyLexeme(row);
 	}
 
 	private void verifyLexeme(int row) {
