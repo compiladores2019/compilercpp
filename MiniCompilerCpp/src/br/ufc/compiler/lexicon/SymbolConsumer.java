@@ -90,7 +90,11 @@ public class SymbolConsumer {
 		case ',':
 			hm.add(new Token(Kind.DEL,",","COMMA", line));
 			break;	
-			
+		
+		case ':':
+			hm.add(new Token(Kind.DEL,":","TWOPNT", line));
+			break;	
+		
 		case '@':
 			hm.add(new Token(Kind.OTHER, "@","OTHER", line));
 			break;
@@ -108,12 +112,14 @@ public class SymbolConsumer {
 
 		String op = sb.toString();
 
-		if (op.equals("public"))
+		if (op.equals("public")) {
 			hm.add(new Token(Kind.PUBLIC, op, "RSVD_WORD",line));
-		else if (op.equals("private"))
+			sb.setLength(0);
+		}else if (op.equals("private")) {
 			hm.add(new Token(Kind.PRIVATE, op,"RSVD_WORD", line));
-
-		sb.setLength(0);
+		    sb.setLength(0);
+		}
+		
 	}
 	
 	protected void treatmentArithms(char c, int line) {
@@ -220,8 +226,16 @@ public class SymbolConsumer {
 	
 	protected void treatmentIndetifier(StringBuilder sb,int row) {
 			
-		    hm.add(new Token(Kind.ID,sb.toString(),"ID",row));	
-		    sb.setLength(0);
+		String lexeme = sb.toString();
+	
+		if(Util.isLetter(lexeme)) 
+			hm.add(new Token(Kind.LETTER,lexeme,"LETTER",row));
+		else if(!Util.isNotIdentifier(lexeme)) 
+		    hm.add(new Token(Kind.ID,lexeme,"ID",row));		   
+		else 
+		    hm.add(new Token(Kind.OTHER,lexeme,"UNKNOW",row));
+		   
+		 sb.setLength(0);
 	}
 
 	protected int treatmentComment(LexiconAnalyzer ln,char c,String com,int i, int row) {

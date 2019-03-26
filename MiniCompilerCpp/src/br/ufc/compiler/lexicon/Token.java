@@ -3,7 +3,8 @@ package br.ufc.compiler.lexicon;
 public class Token {
 
 	protected enum Kind {
-	FOR, IF, WHILE, ELSE, ID,MAIN,PRIVATE, PUBLIC, INT, CHAR, FLOAT, DEL, OP_LOG, OP_ARITHM, OP_REL,OTHER		
+	FOR, IF, WHILE, ELSE, ID,MAIN,PRIVATE, PUBLIC, INT, CHAR, FLOAT, DEL, OP_LOG, OP_ARITHM, OP_REL,
+	LETTER,STRING,OTHER		
  }
 
 	private Kind kind;
@@ -70,6 +71,6 @@ public class Token {
 
 	@Override
 	public String toString() {
-		return "Token [kind= " + kind + ", lexeme="+ lexeme + ", line= " + line + ", value= " + value + ", describe= " + describe + "]\n";
+		return "Token [kind= " + kind + ", lexeme= "+ lexeme + ", line= " + line + ", value= " + value + ", describe= " + describe + "]\n";
 	}
 }

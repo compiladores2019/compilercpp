@@ -13,10 +13,13 @@ public class LexiconAnalyzer {
 
 	private LinkedHashSet<Token> hm = new LinkedHashSet<>();
 	private StringBuilder sb = new StringBuilder();
+	private StringBuilder textBuilder = new StringBuilder();
 	private SymbolConsumer sc = new SymbolConsumer(hm);
 
 	private int commentRow = 0;
 	protected boolean commentActivated = false;
+	protected boolean isText = false;
+	private boolean isAlpha,isNumber,isUnderScore,isDot,isApostrophe;
 	
     //O(2n) = O(n)
 	@SuppressWarnings("resource")
@@ -30,7 +33,6 @@ public class LexiconAnalyzer {
 			throw new IOException("File not exists!");
 		}
 
-		// O(n)
 		while (br.ready()) {
 			String readLine = br.readLine();
 			collectLines(readLine, ++j);
@@ -43,10 +45,8 @@ public class LexiconAnalyzer {
 		if(commentActivated)
 			System.out.println("Comment on line " + commentRow + " not closed!");
 			
-			
 	}
 
-    //O(n)
 	private void collectLines(String line, int row) {
 
 		String ch = null;
@@ -55,36 +55,52 @@ public class LexiconAnalyzer {
 
 			char c = line.charAt(i);
 
-			if (!Character.isSpaceChar(c) && !commentActivated) {
-				  
+			if (!Character.isSpaceChar(c) && !commentActivated && !isText) {
+		
 				ch = String.valueOf(c);
 				
+				 if(c == '"') {
+					 textBuilder.append(c);
+					 isText = true;
+				}else 
 				if (ch.matches("/") || ch.matches("[*]")){
 					i = sc.treatmentComment(this, c, line, i, row);
 					this.commentRow = row;
-				}
-				else if (Util.isOpLogic(ch)) {
-					verifyLexeme(row);
+				}else if (Util.isOpLogic(ch)) {
+					 verifyLexeme(row);
 					i = sc.treatmentRelational(c, line, i, row);
 				}else if (Util.isOpArithm(ch)){
-					 verifyLexeme(row);
+					  verifyLexeme(row);
 					sc.treatmentArithms(c, row);
 				} else if (Util.isDelimiter(ch)) {
-					 verifyLexeme(row);
+					  verifyLexeme(row);
 					 sc.treatmentDelimiter(c, row);
 				}else if(Util.isOther(ch)) 
 				   hm.add(new Token(Kind.OTHER,ch,"OTHER",row));	 
-				else			
-				if (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_' || c == '.')
-					sb.append(c);
+				else
+					 isAlpha = Character.isAlphabetic(c);
+				     isNumber = Character.isDigit(c);
+				     isUnderScore = (c == '_')? true : false;
+				     isDot = (c == '.')? true: false;
+				     isApostrophe = ch.matches("'");
+				     
+				if (isAlpha || isNumber || isUnderScore || isDot || isApostrophe)
+				   sb.append(c); 
 				else
 					 verifyLexeme(row);
-				
-			} else if (!commentActivated)
-				verifyLexeme(row);
-			else if (commentActivated)
-				i = sc.treatmentComment(this, c, line, i, row);
 			
+			} else if(isText && c != '"') {
+				 textBuilder.append(c); 	
+			}else if(c == '"'){
+				 isText = false;
+				 textBuilder.append('"');
+				 hm.add(new Token(Kind.STRING,textBuilder.toString(),'"'+"abc"+'"',"STRING",row));
+				 textBuilder.setLength(0);
+			}else
+				if (!commentActivated)
+				verifyLexeme(row);
+			   else if(commentActivated)
+				i = sc.treatmentComment(this, c, line, i, row);	
 		}
 		if (!commentActivated)
 			verifyLexeme(row);
@@ -98,11 +114,11 @@ public class LexiconAnalyzer {
 		    	sc.treatmentRW(sb, row);	    	
 		 else if(Util.isModifier(lexeme)) 
 		    	sc.treamentmentModifier(sb, row);
-		 else if(Util.isIdentifier(lexeme)) 
-			   sc.treatmentIndetifier(sb, row);
+		 else if(Util.isNotIdentifier(lexeme) || Util.isIdentifier(lexeme) || Util.isLetter(lexeme))
+			  sc.treatmentIndetifier(sb, row);
 		 else  
 			 sc.treatmentNumbers(sb, row);
-		 
+		
 		 sb.setLength(0);
 	}
 	

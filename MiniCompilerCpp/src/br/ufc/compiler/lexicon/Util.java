@@ -26,6 +26,14 @@ public class Util {
 		return id.matches("(_+([0-9]*|[a-zA-Z]*)*)|[a-zA-Z]+([0-9]*|[a-zA-Z]*)*|(_)");
 	}
 
+	public static boolean isNotIdentifier(String id) {
+		return id.matches("([0-9]+([0-9]|[a-zA-Z])+([0-9]|[a-zA-Z])*)");
+	}
+	
+	public static boolean isLetter(String ch) {
+		return ch.matches("'+([0-9]|[a-zA-Z])+'");
+	}
+	
 	public static boolean isOpLogic(String opLogic) {
 		return opLogic.matches("<|>|<=|>=|==|!=|!|=|&") || opLogic.matches("[|]");
 	}
