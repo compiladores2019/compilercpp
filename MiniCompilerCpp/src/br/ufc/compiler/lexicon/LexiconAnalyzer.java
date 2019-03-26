@@ -16,7 +16,8 @@ public class LexiconAnalyzer {
 	private StringBuilder textBuilder = new StringBuilder();
 	private SymbolConsumer sc = new SymbolConsumer(hm);
 
-	private int commentRow = 0;
+	private int commentRow = -1;
+	private int stringUnboundedRow = -1;
 	protected boolean commentActivated = false;
 	protected boolean isText = false;
 	private boolean isAlpha,isNumber,isUnderScore,isDot,isApostrophe;
@@ -44,6 +45,9 @@ public class LexiconAnalyzer {
 		
 		if(commentActivated)
 			System.out.println("Comment on line " + commentRow + " not closed!");
+		
+		if(isText)
+			System.out.println("string couldn't find end of text in line: " + stringUnboundedRow);
 			
 	}
 
@@ -62,6 +66,7 @@ public class LexiconAnalyzer {
 				 if(c == '"') {
 					 textBuilder.append(c);
 					 isText = true;
+					 this.stringUnboundedRow = row;
 				}else 
 				if (ch.matches("/") || ch.matches("[*]")){
 					i = sc.treatmentComment(this, c, line, i, row);
