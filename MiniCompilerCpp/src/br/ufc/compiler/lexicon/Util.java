@@ -13,13 +13,17 @@ public class Util {
 	public static boolean isOther(String other) {
 		return other.matches("#|@");
 	}
+	
+	public static boolean isUnknow(String unk) {
+		return unk.matches("[%,~,^,ª,º,§,¬,¨,°]");
+	}
 
 	public static boolean isOpArithm(String op) {
 		return op.matches("[+|/|*]") || op.matches("[-]");
 	}
 
 	public static boolean isDelimiter(String symbol) {
-		return symbol.matches("[(,),{,},;,@,#,:]") || symbol.matches(",");
+		return symbol.matches("[(,),{,},;,:]") || symbol.matches(",");
 	}
 
 	public static boolean isIdentifier(String id) {

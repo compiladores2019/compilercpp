@@ -80,9 +80,12 @@ public class LexiconAnalyzer {
 				} else if (Util.isDelimiter(ch)) {
 					  verifyLexeme(row);
 					 sc.treatmentDelimiter(c, row);
-				}else if(Util.isOther(ch)) 
-				   hm.add(new Token(Kind.OTHER,ch,"OTHER",row));	 
-				else
+				}else 
+					if(Util.isOther(ch)) 
+				    hm.add(new Token(Kind.OTHER,ch,"OTHER",row));
+				else if(Util.isUnknow(ch)) {
+					hm.add(new Token(Kind.OTHER,ch,"UNKNOW",row));
+				}else
 					 isAlpha = Character.isAlphabetic(c);
 				     isNumber = Character.isDigit(c);
 				     isUnderScore = (c == '_')? true : false;
