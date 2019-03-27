@@ -19,7 +19,7 @@ public class LexiconAnalyzer {
 	private int commentRow = -1;
 	private int stringUnboundedRow = -1;
 	protected boolean commentActivated = false;
-	protected boolean isText = false;
+	private boolean isText = false;
 	private boolean isAlpha,isNumber,isUnderScore,isDot,isApostrophe;
 	
     //O(2n) = O(n)

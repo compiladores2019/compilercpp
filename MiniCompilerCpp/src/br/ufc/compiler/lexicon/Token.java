@@ -3,9 +3,8 @@ package br.ufc.compiler.lexicon;
 public class Token {
 
 	protected enum Kind {
-	FOR, IF, WHILE, ELSE, ID,MAIN,PRIVATE, PUBLIC, INT, CHAR, FLOAT, DEL, OP_LOG, OP_ARITHM, OP_REL,
-	LETTER,STRING,OTHER		
- }
+		FOR, IF, WHILE, ELSE, ID, MAIN, PRIVATE, PUBLIC, INT, CHAR, FLOAT, DEL, OP_LOG, OP_ARITHM, OP_REL, LETTER, STRING, OTHER
+	}
 
 	private Kind kind;
 	private int line;
@@ -13,14 +12,14 @@ public class Token {
 	private String lexeme;
 	private String describe;
 
-	public Token(Kind kind,String lexeme, String describe, int line) {
+	public Token(Kind kind, String lexeme, String describe, int line) {
 		this.kind = kind;
 		this.lexeme = lexeme;
 		this.line = line;
 		this.describe = describe;
 	}
 
-	public Token(Kind kind, Object value,String lexeme, String describe, int line) {
+	public Token(Kind kind, Object value, String lexeme, String describe, int line) {
 
 		this.kind = kind;
 		this.value = value;
@@ -71,6 +70,9 @@ public class Token {
 
 	@Override
 	public String toString() {
-		return "Token [kind= " + kind + ", lexeme= "+ lexeme + ", line= " + line + ", value= " + value + ", describe= " + describe + "]\n";
+		return "Token [kind=" + kind + ", line=" + line + ", value=" + value + ", lexeme=" + lexeme + ", describe="
+				+ describe + "]";
 	}
+
+	
 }
