@@ -1,6 +1,7 @@
 package br.ufc.compiler.cpp;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
@@ -37,25 +38,34 @@ public class Main {
 			
 			window.add(panel);
 			window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			window.setLocationRelativeTo(null);
 			window.pack();
-			window.setSize(500, 320);
+			window.setSize(500, 500);
 			
-
-			JTable table = new JTable();
-			JScrollPane scroll = new JScrollPane(table);
-			panel.add(BorderLayout.CENTER, scroll);
 			DefaultTableModel model = new DefaultTableModel();
-			table.setModel(model);
+			JTable table = new JTable(model);
+			JScrollPane scroll = new JScrollPane(table);
+			
+			panel.add(BorderLayout.CENTER, scroll);
+			
 			table.setFont(new Font("Serif", Font.PLAIN,14));
+			
 			model.addColumn("Kind");
-			model.addColumn("Value");
 			model.addColumn("Lexeme");
+			model.addColumn("Value");
+			model.addColumn("Describe");
 			model.addColumn("Line");
 			
 			for (Token t : ln.getSymbolTable())
-				model.addRow(new Object[]{t.getKind(),t.getValue(),t.getLexeme(),t.getLine()});
-
+				model.addRow(new Object[]{
+						t.getKind(),
+						t.getLexeme(),
+						t.getValue(),
+						t.getDescribe(),
+						t.getLine()});
+	
 			window.setVisible(true);
+			scroll.setVisible(true);
 		}
 	}
 
