@@ -114,12 +114,10 @@ public class SymbolConsumer {
 
 		if (op.equals("public")) {
 			hm.add(new Token(Kind.PUBLIC, op, "RSVD_WORD",line));
-			sb.setLength(0);
 		}else if (op.equals("private")) {
 			hm.add(new Token(Kind.PRIVATE, op,"RSVD_WORD", line));
-		    sb.setLength(0);
 		}
-		
+	    sb.setLength(0);
 	}
 	
 	protected void treatmentArithms(char c, int line) {
@@ -249,7 +247,7 @@ public class SymbolConsumer {
 		
 		case '/':
 		{
-			if(str.equals("//")) return com.length() - 1;
+			if(str.equals("//")) return i + 1;
 			else if(str.equals("/*")) {
 				ln.commentActivated = true;
 				return i + 1;

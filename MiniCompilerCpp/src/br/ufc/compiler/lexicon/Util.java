@@ -15,7 +15,9 @@ public class Util {
 	}
 	
 	public static boolean isUnknow(String unk) {
-		return unk.matches("[%,~,^,ª,º,§,¬,¨,°]");
+
+		return !isOpArithm(unk) && !isOpLogic(unk) && !isDelimiter(unk) && !isOther(unk);
+		
 	}
 
 	public static boolean isOpArithm(String op) {

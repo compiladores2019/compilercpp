@@ -1,7 +1,6 @@
 package br.ufc.compiler.cpp;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +20,8 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 
+		
+		
 		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView());
 
 		int getValue = chooser.showOpenDialog(null);
@@ -44,17 +45,18 @@ public class Main {
 			
 			DefaultTableModel model = new DefaultTableModel();
 			JTable table = new JTable(model);
+			table.setSize(500, 500);
 			JScrollPane scroll = new JScrollPane(table);
 			
 			panel.add(BorderLayout.CENTER, scroll);
 			
-			table.setFont(new Font("Serif", Font.PLAIN,14));
+			table.setFont(new Font("Serif", Font.PLAIN,16));
 			
-			model.addColumn("Kind");
-			model.addColumn("Lexeme");
-			model.addColumn("Value");
-			model.addColumn("Describe");
-			model.addColumn("Line");
+			model.addColumn("KIND");
+			model.addColumn("LEXEME");
+			model.addColumn("VALUE");
+			model.addColumn("DESCRIBE");
+			model.addColumn("LINE");
 			
 			for (Token t : ln.getSymbolTable())
 				model.addRow(new Object[]{
@@ -63,10 +65,12 @@ public class Main {
 						t.getValue(),
 						t.getDescribe(),
 						t.getLine()});
-	
+				
 			window.setVisible(true);
 			scroll.setVisible(true);
-		}
+		} 
+		
 	}
+	
 
 }

@@ -20,8 +20,8 @@ public class LexiconAnalyzer {
 	private int stringUnboundedRow = -1;
 	protected boolean commentActivated = false;
 	private boolean isText = false;
-	private boolean isAlpha,isNumber,isUnderScore,isDot,isApostrophe;
-	
+	private boolean isAlpha,isNumber,isUnderScore,isDot,isApostrophe = false;
+
     //O(2n) = O(n)
 	@SuppressWarnings("resource")
 	public void builderSymbolTable(String path) throws IOException {
@@ -67,49 +67,56 @@ public class LexiconAnalyzer {
 					 textBuilder.append(c);
 					 isText = true;
 					 this.stringUnboundedRow = row;
+					 sb.setLength(0);
 				}else 
 				if (ch.matches("/") || ch.matches("[*]")){
+
 					i = sc.treatmentComment(this, c, line, i, row);
 					this.commentRow = row;
+					sb.setLength(0);
 				}else if (Util.isOpLogic(ch)) {
-					 verifyLexeme(row);
+					verifyLexeme(row);
 					i = sc.treatmentRelational(c, line, i, row);
 				}else if (Util.isOpArithm(ch)){
 					  verifyLexeme(row);
-					sc.treatmentArithms(c, row);
+					  sc.treatmentArithms(c, row);
 				} else if (Util.isDelimiter(ch)) {
 					  verifyLexeme(row);
-					 sc.treatmentDelimiter(c, row);
-				}else 
-					if(Util.isOther(ch)) 
+					  sc.treatmentDelimiter(c, row);
+				}else if(Util.isOther(ch)) {
 				    hm.add(new Token(Kind.OTHER,ch,"OTHER",row));
-				else if(Util.isUnknow(ch)) {
-					hm.add(new Token(Kind.OTHER,ch,"UNKNOW",row));
+				    sb.setLength(0);		
 				}else
-					 isAlpha = Character.isAlphabetic(c);
+					 isAlpha = Character.isLetter(c);
 				     isNumber = Character.isDigit(c);
 				     isUnderScore = (c == '_')? true : false;
 				     isDot = (c == '.')? true: false;
 				     isApostrophe = ch.matches("'");
 				     
-				if (isAlpha || isNumber || isUnderScore || isDot || isApostrophe)
+				if (isAlpha || isNumber || isUnderScore || isDot || isApostrophe) {
 				   sb.append(c); 
-				else
+				   isAlpha = isNumber = isUnderScore = isDot = isApostrophe = false;
+				}else{
+
+					 if(Util.isUnknow(ch) && c !='"') 
+						 hm.add(new Token(Kind.OTHER,ch,"UNKNOW",row));
+					
 					 verifyLexeme(row);
-			
-			} else if(isText && c != '"') {
-				 textBuilder.append(c); 	
-			}else if(c == '"'){
-				 isText = false;
-				 textBuilder.append('"');
-				 hm.add(new Token(Kind.STRING,textBuilder.toString(),'"'+"abc"+'"',"STRING",row));
-				 textBuilder.setLength(0);
-			}else
-				if (!commentActivated)
-				verifyLexeme(row);
-			   else if(commentActivated)
-				i = sc.treatmentComment(this, c, line, i, row);	
-		}
+				}
+				
+			}else  if(isText && c != '"') {
+		         textBuilder.append(c); 	
+            }else if(c == '"'){
+	           isText = false;
+	           textBuilder.append('"');
+	           hm.add(new Token(Kind.STRING,textBuilder.toString(),'"'+"abc"+'"',"STRING",row));
+              textBuilder.setLength(0);
+        }else
+			 if(!commentActivated)
+					 verifyLexeme(row);
+				else if(commentActivated) 
+					i = sc.treatmentComment(this, c, line, i, row);		
+		      }
 		if (!commentActivated)
 		    verifyLexeme(row);
 	}
@@ -117,17 +124,15 @@ public class LexiconAnalyzer {
 	private void verifyLexeme(int row) {
 		
 		String lexeme = sb.toString();
-		 
+			 
 		 if(Util.isReservedWord(lexeme)) 
 		    	sc.treatmentRW(sb, row);	    	
 		 else if(Util.isModifier(lexeme)) 
 		    	sc.treamentmentModifier(sb, row);
 		 else if(Util.isNotIdentifier(lexeme) || Util.isIdentifier(lexeme) || Util.isLetter(lexeme))
 			  sc.treatmentIndetifier(sb, row);
-		 else  
-			 sc.treatmentNumbers(sb, row);
-		
-		 sb.setLength(0);
+		 else 
+			 sc.treatmentNumbers(sb, row);	
 	}
 	
 	public LinkedHashSet<Token> getSymbolTable(){return this.hm;}
