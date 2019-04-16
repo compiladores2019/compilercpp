@@ -20,8 +20,7 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 
-		
-		
+
 		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView());
 
 		int getValue = chooser.showOpenDialog(null);
@@ -69,6 +68,7 @@ public class Main {
 			window.setVisible(true);
 			scroll.setVisible(true);
 		} 
+		
 		
 	}
 	
