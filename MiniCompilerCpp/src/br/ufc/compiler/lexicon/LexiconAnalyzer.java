@@ -10,7 +10,7 @@ import br.ufc.compiler.lexicon.Token.Kind;
 
 public class LexiconAnalyzer {
 
-	private LinkedHashSet<Token> hm = new LinkedHashSet<>();
+	private static LinkedHashSet<Token> hm = new LinkedHashSet<>();
 	private StringBuilder sb = new StringBuilder();
 	private StringBuilder textBuilder = new StringBuilder();
 	private SymbolConsumer sc = new SymbolConsumer(hm);
@@ -133,8 +133,8 @@ public class LexiconAnalyzer {
 			sc.treatmentNumbers(sb, row);
 	}
 
-	public LinkedHashSet<Token> getSymbolTable() {
-		return this.hm;
+	public static LinkedHashSet<Token> getSymbolTable() {
+		return hm;
 	}
 
 	@Override

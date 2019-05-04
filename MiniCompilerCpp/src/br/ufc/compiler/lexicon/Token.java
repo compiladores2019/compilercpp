@@ -2,7 +2,7 @@ package br.ufc.compiler.lexicon;
 
 public class Token {
 
-	protected enum Kind {
+	public enum Kind {
 		FOR, IF, WHILE, ELSE, ID, MAIN, PRIVATE, PUBLIC, INT, CHAR, FLOAT, DEL, OP_LOG, OP_ARITHM, OP_REL, LETTER, STRING, OTHER
 	}
 

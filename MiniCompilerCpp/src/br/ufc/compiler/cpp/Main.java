@@ -57,7 +57,7 @@ public class Main {
 			model.addColumn("DESCRIBE");
 			model.addColumn("LINE");
 			
-			for (Token t : ln.getSymbolTable())
+			for (Token t : LexiconAnalyzer.getSymbolTable())
 				model.addRow(new Object[]{
 						t.getKind(),
 						t.getLexeme(),
