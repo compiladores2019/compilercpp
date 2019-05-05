@@ -7,13 +7,13 @@ import br.ufc.compiler.lexicon.LexiconAnalyzer;
 
 public class Parser {
 
-	protected static Token currentSymbol;
+	private static Token currentSymbol;
 	
-	public static List<Token> array; 
+	private static List<Token> array; 
 	public static int position = 0;
 	
-	public Parser(){
-		Parser.array = new ArrayList<Token>();
+	public static void InitParser(){
+		array = new ArrayList<Token>();
         array.addAll(LexiconAnalyzer.getSymbolTable());
 	}
 	
@@ -23,10 +23,13 @@ public class Parser {
 	}
 	
 	public static Token currentToken(){
+
 		currentSymbol = array.get(position);
 		return currentSymbol;
 
 	}
+	
+	
 	
 	
 	//void paser(){
