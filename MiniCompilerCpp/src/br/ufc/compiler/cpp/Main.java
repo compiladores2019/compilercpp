@@ -16,24 +16,34 @@ import javax.swing.table.DefaultTableModel;
 import br.ufc.compiler.lexicon.LexiconAnalyzer;
 import br.ufc.compiler.lexicon.Token;
 import br.ufc.compiler.parse.Analyze;
+import br.ufc.compiler.parse.Parser;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException {
 
-		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView());
 
-		int getValue = chooser.showOpenDialog(null);
+		//JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView());
 
-		if (getValue == JFileChooser.APPROVE_OPTION) {
+		//int getValue = chooser.showOpenDialog(null);
 
-			File isSelectedFile = chooser.getSelectedFile();
+		//if (getValue == JFileChooser.APPROVE_OPTION) {
 
+			//File isSelectedFile = chooser.getSelectedFile();
+			
 			LexiconAnalyzer ln = new LexiconAnalyzer();
 
-			ln.builderSymbolTable(isSelectedFile.getAbsolutePath());
-
-			JFrame window = new JFrame("Symbol Table");
+			//ln.builderSymbolTable(isSelectedFile.getAbsolutePath());
+			ln.builderSymbolTable("_files/test.cpp");
+		
+			//System.out.println(ln.getSymbolTable());
+			Analyze.start(); 
+			
+			LexiconAnalyzer.getSymbolTable().clear(); //limpando a tabela dos tokens
+			Parser.destroy(); // limpando array e resetando a posição do apontador de índice
+		   
+			
+			/*JFrame window = new JFrame("Symbol Table");
 			JPanel panel = new JPanel();
 
 			window.add(panel);
@@ -63,9 +73,10 @@ public class Main {
 			window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			window.setVisible(true);
 			scroll.setVisible(true);
-
-			Analyze.start();
-		}
+			
+   */
+			
+		//}
 
 	}
 
