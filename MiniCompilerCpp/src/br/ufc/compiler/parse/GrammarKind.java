@@ -2,51 +2,97 @@ package br.ufc.compiler.parse;
 
 import br.ufc.compiler.lexicon.Token.Kind;
 
-/**/
+
 public class GrammarKind {
 
-	
-	/*Reconhece declaroçoes do tipo: int v,xd=f,a=9;   */
-	static void kind() {
-
+	static {
 		Parser.InitParser();
+	}
 
-		if (Parser.currentToken().getKind().equals(Kind.INT)) {
+	/* Reconhece declarocoes do tipo: int v,xd=f,a=9; */
+
+	public static void kind() {
+
+		if (Parser.currentSymbol.getKind().equals(Kind.INT) ||
+			Parser.currentSymbol.getKind().equals(Kind.CHAR) ||
+			Parser.currentSymbol.getKind().equals(Kind.FLOAT)) {
+			  
 			Parser.nextToken();
+			
+			if (Parser.currentSymbol.getKind().equals(Kind.ID)) {
 
-			if (Parser.currentToken().getKind().equals(Kind.ID)) {
-				nextID();
-				/*
-				 * Se executar sem exibir mensagem ou erro, então é pq está
-				 * certo!
-				 */
+				Parser.nextToken();
+				declaration();
+		
+			} else {
+				System.out.println("Erro sintÃ¡tico -> Linha " + Parser.currentSymbol.getLine());
 			}
-
-			else
-				System.out.println("Building.....");
-
-			// int id;
-			// int id,id,id;
-			// int id = exp;
 		}
 
 	}
 
+	private static void declaration() {
+	
+		if (Parser.currentSymbol.getLexeme().equals(",")) {
+			
+			Parser.nextToken();
+			
+			if (Parser.currentSymbol.getKind().equals(Kind.ID)) {
+				
+				Parser.nextToken();
+	             declaration();
+			}else {
+				System.out.println("Syntax error line -> " + Parser.currentSymbol.getLine() + 
+						 "\ncause by: "+ Parser.currentSymbol.getLexeme());
+			    return;
+			}
+		}else{
+			    if (Parser.currentSymbol.getLexeme().equals(";")) return;
+			
+			    else {
+						
+                    if(Parser.currentSymbol.getLexeme().equals("=")) {
+					   Parser.nextToken();
+					
+					  // GrammarExpressions.expressionArithms();
+					   
+					if( Parser.currentSymbol.getKind().equals(Kind.ID)  ||
+					    Parser.currentSymbol.getKind().equals(Kind.INT) ||
+					    Parser.currentSymbol.getKind().equals(Kind.FLOAT) || 
+						Parser.currentSymbol.getKind().equals(Kind.LETTER)){
+		
+						 Parser.nextToken();
+					     declaration();
+					   
+					}else{ 
+						System.out.println("Syntax error line -> " + Parser.currentSymbol.getLine() + 
+								 "\ncause by: "+ Parser.currentSymbol.getLexeme());
+					    return;
+					}
+			
+			}
+		}
+
+	   }
+	}
+	
+
 	private static void nextID() {
 		Parser.nextToken();
 
-		if (Parser.currentToken().getLexeme().equals(";"))
+		if (Parser.currentSymbol.getLexeme().equals(";")) {
+			System.out.println(Parser.currentSymbol);
 			return;
+		}
 
-		System.out.println(Parser.currentToken().getLexeme());
+		System.out.println(Parser.currentSymbol.getLexeme());
 
-		if (Parser.currentToken().getLexeme().equals(",") || Parser.currentToken().getLexeme().equals("=")) {
+		if (Parser.currentSymbol.getLexeme().equals(",") || Parser.currentSymbol.getLexeme().equals("=")) {
 
 			nextID();
 		}
 
-		else if (Parser.currentToken().getKind().equals(Kind.ID)
-				|| Parser.currentToken().getLexeme().equals(Kind.INT)) {
+		else if (Parser.currentSymbol.getKind().equals(Kind.ID) || Parser.currentSymbol.getLexeme().equals(Kind.INT)) {
 			nextID();
 		}
 
