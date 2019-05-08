@@ -230,7 +230,7 @@ public class SymbolConsumer {
 			hm.add(new Token(Kind.LETTER,lexeme,"LETTER",row));
 		else if(!Util.isNotIdentifier(lexeme)) 
 		    hm.add(new Token(Kind.ID,lexeme,"ID",row));		   
-		else 
+		else
 		    hm.add(new Token(Kind.OTHER,lexeme,"UNKNOW",row));
 		   
 		 sb.setLength(0);
@@ -247,11 +247,11 @@ public class SymbolConsumer {
 		
 		case '/':
 		{
-			if(str.equals("//")) return i + 1;
+			if(str.equals("//")) return com.length() - 1;
 			else if(str.equals("/*")) {
 				ln.commentActivated = true;
 				return i + 1;
-		   }else if(str.equals("/"))
+		   }else if(str.matches("/+([0-9]*|[A-Za-z]*| *)*"))
 			     hm.add(new Token(Kind.OP_ARITHM,"/", "DIV_OP",row));
 		   break;	
 		}
@@ -260,7 +260,7 @@ public class SymbolConsumer {
 			  if(str.equals("*/")) {
 				ln.commentActivated = false;
 				return i + 1;	
-			  }else if(str.matches("[*]+([a-zA-z]*|[0-9]*)*"));
+			  }else if(str.matches("[*]+([a-zA-Z]*|[0-9]*)*"));
 				  	  hm.add(new Token(Kind.OP_ARITHM,"*","MULT_OP",row));
 			  
 			 break;

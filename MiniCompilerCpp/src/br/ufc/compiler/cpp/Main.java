@@ -34,10 +34,10 @@ public class Main {
 			LexiconAnalyzer ln = new LexiconAnalyzer();
 
 			//ln.builderSymbolTable(isSelectedFile.getAbsolutePath());
-			ln.builderSymbolTable("_files/test.cpp");
+			ln.builderSymbolTable("/home/rafael/IdeaProjects/compilercpp/MiniCompilerCpp/_files/test.cpp");
 		
 			//System.out.println(ln.getSymbolTable());
-			Analyze.start(); 
+			Analyze.start();
 			
 			LexiconAnalyzer.getSymbolTable().clear(); //limpando a tabela dos tokens
 			Parser.destroy(); // limpando array e resetando a posição do apontador de índice

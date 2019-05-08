@@ -14,16 +14,21 @@ public class GrammarKind {
 	public static void kind() {
 
 		if (Parser.currentSymbol.getKind().equals(Kind.INT) ||
-			Parser.currentSymbol.getKind().equals(Kind.CHAR) ||
-			Parser.currentSymbol.getKind().equals(Kind.FLOAT)) {
-			  
+				Parser.currentSymbol.getKind().equals(Kind.CHAR) ||
+				Parser.currentSymbol.getKind().equals(Kind.FLOAT)) {
+
 			Parser.nextToken();
-			
+
+			//exemplo adaptado para testar as expreões aritméticas
+			//pretendo usar a expressão dentro de declaration
 			if (Parser.currentSymbol.getKind().equals(Kind.ID)) {
 
 				Parser.nextToken();
-				declaration();
-		
+				if(Parser.currentSymbol.getLexeme().equals("="))
+					Parser.nextToken();
+				GrammarExpressions.expressionArithms();
+				//declaration();
+
 			} else {
 				System.out.println("Erro sintático -> Linha " + Parser.currentSymbol.getLine());
 			}
@@ -32,50 +37,48 @@ public class GrammarKind {
 	}
 
 	private static void declaration() {
-	
-		if (Parser.currentSymbol.getLexeme().equals(",")) {
-			
+
+		if (Parser.currentSymbol.getLexeme().equals(",")){
+
 			Parser.nextToken();
-			
+
 			if (Parser.currentSymbol.getKind().equals(Kind.ID)) {
-				
+
 				Parser.nextToken();
-	             declaration();
+				declaration();
 			}else {
-				System.out.println("Syntax error line -> " + Parser.currentSymbol.getLine() + 
-						 "\ncause by: "+ Parser.currentSymbol.getLexeme());
-			    return;
+				System.out.println("Syntax error line -> " + Parser.currentSymbol.getLine() +
+						"\ncause by: "+ Parser.currentSymbol.getLexeme());
+				return;
 			}
 		}else{
-			    if (Parser.currentSymbol.getLexeme().equals(";")) return;
-			
-			    else {
-						
-                    if(Parser.currentSymbol.getLexeme().equals("=")) {
-					   Parser.nextToken();
-					
-					  // GrammarExpressions.expressionArithms();
-					   
-					if( Parser.currentSymbol.getKind().equals(Kind.ID)  ||
-					    Parser.currentSymbol.getKind().equals(Kind.INT) ||
-					    Parser.currentSymbol.getKind().equals(Kind.FLOAT) || 
-						Parser.currentSymbol.getKind().equals(Kind.LETTER)){
-		
-						 Parser.nextToken();
-					     declaration();
-					   
-					}else{ 
-						System.out.println("Syntax error line -> " + Parser.currentSymbol.getLine() + 
-								 "\ncause by: "+ Parser.currentSymbol.getLexeme());
-					    return;
-					}
-			
-			}
-		}
+			if (Parser.currentSymbol.getLexeme().equals(";")) return;
 
-	   }
+			else {
+
+				if(Parser.currentSymbol.getLexeme().equals("=")) {
+					Parser.nextToken();
+
+					if(Parser.currentSymbol.getKind().equals(Kind.ID)  ||
+							Parser.currentSymbol.getKind().equals(Kind.INT) ||
+							Parser.currentSymbol.getKind().equals(Kind.FLOAT) ||
+							Parser.currentSymbol.getKind().equals(Kind.LETTER)){
+
+						Parser.nextToken();
+						declaration();
+
+					}else{
+						System.out.println("Syntax error line -> " + Parser.currentSymbol.getLine() +
+								"\ncause by: "+ Parser.currentSymbol.getLexeme());
+						return;
+					}
+
+				}
+			}
+
+		}
 	}
-	
+
 
 	private static void nextID() {
 		Parser.nextToken();
