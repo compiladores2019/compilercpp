@@ -3,7 +3,10 @@ package br.ufc.compiler.parse;
 import java.util.ArrayList;
 import java.util.List;
 import br.ufc.compiler.lexicon.Token;
+import br.ufc.compiler.lexicon.Token.Kind.*;
 import br.ufc.compiler.lexicon.LexiconAnalyzer;
+
+import static br.ufc.compiler.lexicon.Token.Kind.OTHER;
 
 public class Parser {
 

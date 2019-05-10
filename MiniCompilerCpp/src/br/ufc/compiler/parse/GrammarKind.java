@@ -2,35 +2,39 @@ package br.ufc.compiler.parse;
 
 import br.ufc.compiler.lexicon.Token.Kind;
 
+import static br.ufc.compiler.lexicon.Token.Kind.*;
+import static br.ufc.compiler.parse.GrammarExpressions.*;
+import static br.ufc.compiler.parse.Parser.*;
 
 public class GrammarKind {
 
 	static {
-		Parser.InitParser();
+		InitParser();
 	}
 
 	/* Reconhece declarocoes do tipo: int v,xd=f,a=9; */
 
 	public static void kind() {
 
-		if (Parser.currentSymbol.getKind().equals(Kind.INT) ||
-				Parser.currentSymbol.getKind().equals(Kind.CHAR) ||
-				Parser.currentSymbol.getKind().equals(Kind.FLOAT)) {
+		if (currentSymbol.getKind().equals(INT) ||
+				currentSymbol.getKind().equals(CHAR) ||
+				currentSymbol.getKind().equals(FLOAT)) {
 
-			Parser.nextToken();
+			System.out.print(currentSymbol.getLexeme()+" ");
+			nextToken();
 
 			//exemplo adaptado para testar as expreões aritméticas
 			//pretendo usar a expressão dentro de declaration
-			if (Parser.currentSymbol.getKind().equals(Kind.ID)) {
-
-				Parser.nextToken();
-				if(Parser.currentSymbol.getLexeme().equals("="))
-					Parser.nextToken();
-				GrammarExpressions.expressionArithms();
-				//declaration();
+			if (currentSymbol.getKind().equals(ID)) {
+				System.out.print(currentSymbol.getLexeme()+" ");
+				nextToken();
+				//if(Parser.currentSymbol.getLexeme().equals("="))
+					//Parser.nextToken();
+				//GrammarExpressions.expressionArithms();
+				declaration();
 
 			} else {
-				System.out.println("Erro sintático -> Linha " + Parser.currentSymbol.getLine());
+				System.out.println("Erro sintático -> Linha " + currentSymbol.getLine());
 			}
 		}
 
@@ -38,38 +42,50 @@ public class GrammarKind {
 
 	private static void declaration() {
 
-		if (Parser.currentSymbol.getLexeme().equals(",")){
+		//falta achar uma forma de tratar o caso quando não tem o ; no final
 
-			Parser.nextToken();
+		if (currentSymbol.getLexeme().equals(",")){
 
-			if (Parser.currentSymbol.getKind().equals(Kind.ID)) {
-
-				Parser.nextToken();
+			System.out.print(currentSymbol.getLexeme()+" ");
+			   nextToken();
+			if (currentSymbol.getKind().equals(ID)) {
+				System.out.print(currentSymbol.getLexeme()+" ");
+				nextToken();
 				declaration();
+
 			}else {
-				System.out.println("Syntax error line -> " + Parser.currentSymbol.getLine() +
-						"\ncause by: "+ Parser.currentSymbol.getLexeme());
+
+				System.out.println("Syntax error line -> " + currentSymbol.getLine() +
+						"\ncause by: "+ currentSymbol.getLexeme());
 				return;
 			}
 		}else{
-			if (Parser.currentSymbol.getLexeme().equals(";")) return;
+			if (currentSymbol.getLexeme().equals(";")) return;
 
 			else {
 
-				if(Parser.currentSymbol.getLexeme().equals("=")) {
-					Parser.nextToken();
+				if(currentSymbol.getLexeme().equals("=")) {
 
-					if(Parser.currentSymbol.getKind().equals(Kind.ID)  ||
-							Parser.currentSymbol.getKind().equals(Kind.INT) ||
-							Parser.currentSymbol.getKind().equals(Kind.FLOAT) ||
-							Parser.currentSymbol.getKind().equals(Kind.LETTER)){
+					System.out.print(currentSymbol.getLexeme() + " ");
+					nextToken();
+					expressionArithms();
+					if (currentSymbol.getLexeme().equals(",")) {
+						declaration();
+					} else
+						if (currentSymbol.getLexeme().equals(";"))
+						return;
+                    else
+					if(currentSymbol.getKind().equals(ID) ||
+							currentSymbol.getKind().equals(INT) ||
+							currentSymbol.getKind().equals(FLOAT) ||
+							currentSymbol.getKind().equals(LETTER)){
 
-						Parser.nextToken();
+						nextToken();
 						declaration();
 
 					}else{
-						System.out.println("Syntax error line -> " + Parser.currentSymbol.getLine() +
-								"\ncause by: "+ Parser.currentSymbol.getLexeme());
+						System.out.println("Syntax error line -> " + currentSymbol.getLine() +
+								"\ncause by: "+ currentSymbol.getLexeme());
 						return;
 					}
 
@@ -81,21 +97,21 @@ public class GrammarKind {
 
 
 	private static void nextID() {
-		Parser.nextToken();
+		nextToken();
 
-		if (Parser.currentSymbol.getLexeme().equals(";")) {
-			System.out.println(Parser.currentSymbol);
+		if (currentSymbol.getLexeme().equals(";")) {
+			System.out.println(currentSymbol);
 			return;
 		}
 
-		System.out.println(Parser.currentSymbol.getLexeme());
+		System.out.println(currentSymbol.getLexeme());
 
-		if (Parser.currentSymbol.getLexeme().equals(",") || Parser.currentSymbol.getLexeme().equals("=")) {
+		if (currentSymbol.getLexeme().equals(",") || currentSymbol.getLexeme().equals("=")) {
 
 			nextID();
 		}
 
-		else if (Parser.currentSymbol.getKind().equals(Kind.ID) || Parser.currentSymbol.getLexeme().equals(Kind.INT)) {
+		else if (currentSymbol.getKind().equals(ID) || currentSymbol.getLexeme().equals(INT)) {
 			nextID();
 		}
 

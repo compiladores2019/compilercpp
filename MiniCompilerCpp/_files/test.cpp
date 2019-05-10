@@ -1,3 +1,3 @@
-int d= (a + b - c * (d / 3))
+int a,b,c,d = x,e
 
 
