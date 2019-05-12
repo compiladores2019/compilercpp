@@ -1,3 +1,4 @@
-int a,b,c,d = x,e
+//int a,c = id < ,b,v;
 
+if(){}else{if(){}else{}
 

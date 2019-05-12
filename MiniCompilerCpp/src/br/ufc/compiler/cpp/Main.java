@@ -34,7 +34,7 @@ public class Main {
 			LexiconAnalyzer ln = new LexiconAnalyzer();
 
 			//ln.builderSymbolTable(isSelectedFile.getAbsolutePath());
-			ln.builderSymbolTable("/home/rafael/IdeaProjects/compilercpp/MiniCompilerCpp/_files/test.cpp");
+			ln.builderSymbolTable("_files/test.cpp");
 		
 			//System.out.println(ln.getSymbolTable());
 			Analyze.start();
@@ -43,7 +43,7 @@ public class Main {
 			Parser.destroy(); // limpando array e resetando a posição do apontador de índice
 		   
 			
-			/*JFrame window = new JFrame("Symbol Table");
+		/*	JFrame window = new JFrame("Symbol Table");
 			JPanel panel = new JPanel();
 
 			window.add(panel);
@@ -74,7 +74,7 @@ public class Main {
 			window.setVisible(true);
 			scroll.setVisible(true);
 			
-   */
+      */
 			
 		//}
 

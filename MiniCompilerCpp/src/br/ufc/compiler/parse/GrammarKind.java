@@ -37,20 +37,25 @@ public class GrammarKind {
 				System.out.println("Erro sintático -> Linha " + currentSymbol.getLine());
 			}
 		}
+		
+		
+		if(currentSymbol.getKind().equals(IF))
+			 GrammarIf.commandIf();
+		
 
 	}
-
+	
 	private static void declaration() {
 
 		//falta achar uma forma de tratar o caso quando não tem o ; no final
-
+   
 		if (currentSymbol.getLexeme().equals(",")){
-
 			System.out.print(currentSymbol.getLexeme()+" ");
 			   nextToken();
 			if (currentSymbol.getKind().equals(ID)) {
 				System.out.print(currentSymbol.getLexeme()+" ");
 				nextToken();
+				
 				declaration();
 
 			}else {
@@ -58,7 +63,7 @@ public class GrammarKind {
 				System.out.println("Syntax error line -> " + currentSymbol.getLine() +
 						"\ncause by: "+ currentSymbol.getLexeme());
 				return;
-			}
+			} 
 		}else{
 			if (currentSymbol.getLexeme().equals(";")) return;
 
@@ -79,7 +84,7 @@ public class GrammarKind {
 							currentSymbol.getKind().equals(INT) ||
 							currentSymbol.getKind().equals(FLOAT) ||
 							currentSymbol.getKind().equals(LETTER)){
-
+ 
 						nextToken();
 						declaration();
 
@@ -89,7 +94,7 @@ public class GrammarKind {
 						return;
 					}
 
-				}
+				}else System.out.println("erroooooo");
 			}
 
 		}
@@ -118,6 +123,11 @@ public class GrammarKind {
 		else
 			System.out.println("Erro sitatico!s");
 
+	}
+
+
+	private static void condition(){
+		
 	}
 
 }

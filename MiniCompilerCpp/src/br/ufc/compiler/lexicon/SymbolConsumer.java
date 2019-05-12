@@ -180,7 +180,7 @@ public class SymbolConsumer {
 
 		case '!': {
 			if (operator.equals("!=")) {
-				hm.add(new Token(Kind.OP_REL, "!=","REL_NE", row));
+				hm.add(new Token(Kind.OP_LOG, "!=","REL_NE", row));
 				return i + 1;
 			} else
 				hm.add(new Token(Kind.OP_LOG, "!","LOG_NOT", row));
