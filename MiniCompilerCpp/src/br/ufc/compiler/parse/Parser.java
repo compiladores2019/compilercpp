@@ -11,41 +11,48 @@ import static br.ufc.compiler.lexicon.Token.Kind.OTHER;
 public class Parser {
 
 	public static Token currentSymbol;
-	
-	private static List<Token> array; 
+
+	private static List<Token> array;
 	private static int position = 0;
-	
+
 	public static void destroy() {
 		array.clear();
 		position = 0;
 	}
-	
-	public static void InitParser(){
-		
+
+	public static void InitParser() {
+
 		array = new ArrayList<Token>();
-        array.addAll(LexiconAnalyzer.getSymbolTable());
-        currentSymbol = array.get(position);
-        position++;
-        
+		array.addAll(LexiconAnalyzer.getSymbolTable());
+		currentSymbol = array.get(position);
+		position++;
+
 	}
-	
-	public static void nextToken(){
-		
-		if(position < array.size()) {
+
+	public static void nextToken() {
+
+		if (position < array.size()) {
 			currentSymbol = array.get(position);
 			position++;
 		}
 	}
-	
+
 	public static void previousToken() {
 		position--;
 		currentSymbol = array.get(position);
-		
-	}
-	
 
-	//void parser(){
-		
-	//}
+	}
+
+	public static int size() {
+		return array.size();
+	}
+
+	public static int getPosition() {
+		return position;
+	}
+
+	// void parser(){
+
+	// }
 
 }

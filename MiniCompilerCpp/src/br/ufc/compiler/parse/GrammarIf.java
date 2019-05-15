@@ -4,6 +4,8 @@ import static br.ufc.compiler.lexicon.Token.Kind.ELSE;
 import static br.ufc.compiler.lexicon.Token.Kind.IF;
 import static br.ufc.compiler.parse.Parser.currentSymbol;
 import static br.ufc.compiler.parse.Parser.nextToken;
+import static br.ufc.compiler.parse.Parser.size;
+import static br.ufc.compiler.parse.Parser.getPosition;
 
 import java.util.Stack;
 
@@ -15,82 +17,78 @@ public class GrammarIf {
 	private static Stack<Token> balanceKey = new Stack<>();
 
 	public static void commandIf() {
+		if (!ifError())
+			System.out.println(" error");
+
+	}
+
+	private static boolean ifError() {
 
 		if (currentSymbol.getKind().equals(IF)) {
-			System.out.println(currentSymbol.getLexeme() + " ");
 			nextToken();
+
 			if (currentSymbol.getLexeme().equals("(")) {
 				System.out.println(currentSymbol.getLexeme() + " ");
 				nextToken();
-				// expressionForIf();
 
+				// expressionForIf();
 				if (currentSymbol.getLexeme().equals(")")) {
 					System.out.println(currentSymbol.getLexeme() + " ");
 					nextToken();
+
 					if (currentSymbol.getLexeme().equals("{")) {
 						System.out.println(currentSymbol.getLexeme() + " ");
 						nextToken();
+
+						balanceKey.push(new Token(Kind.DEL, "{", "closing-key-to-this-line", currentSymbol.getLine()));
+
 						// declaration()?
 						// Attbibr()?
 						// if?
 
+						if (currentSymbol.getKind().equals(IF))
+							ifError();
+
 						if (currentSymbol.getLexeme().equals("}")) {
 							System.out.println(currentSymbol.getLexeme() + " ");
+							balanceKey.pop();
 							nextToken();
 
 							if (currentSymbol.getKind().equals(ELSE)) {
 								System.out.println(currentSymbol.getLexeme() + " ");
 								nextToken();
+
 								if (currentSymbol.getLexeme().equals("{")) {
 									System.out.println(currentSymbol.getLexeme() + " ");
 									nextToken();
 
-									if (currentSymbol.getKind().equals(IF)) {
-
-										balanceKey.push(new Token(Kind.DEL, "}", "closing-key-to-this-line",
-												currentSymbol.getLine()));
-
-										commandIf();
-										
-										while (!balanceKey.isEmpty() && currentSymbol.getLexeme().equals("}")) {
-											balanceKey.pop();
-											nextToken();
-
-										}
-										
-										
-									}
+									balanceKey.push(new Token(Kind.DEL, "{", "closing-key-to-this-line",
+											currentSymbol.getLine()));
 
 									// declaration()?
 									// Attbibr()?
 									// if?
+									if (currentSymbol.getKind().equals(IF))
+										ifError();
 
-									if (currentSymbol.getLexeme().equals("}") && !balanceKey.isEmpty()) {
-
+									if (currentSymbol.getLexeme().equals("}")) {
 										nextToken();
-										
-										if (currentSymbol.getLexeme().equals("}"))System.out.println("erro");
-										
-										return;
-											
-									} else {
-										System.out.println("Chave else fecha!");
-										return;
-									}
-								}
+										balanceKey.pop();
 
-								else {
+									} else {
+										System.out.println("Chave else  fecha!");
+
+									}
+								} else {
 									System.out.println("chave else fecha");
 								}
 							}
-
 						} else {
 							System.out.println("Chave if fecha!");
 						}
 					} else {
 						System.out.println("Chave if abre!");
 					}
-
 				} else {
 
 					System.out.println("parenteses if fecha!");
@@ -98,9 +96,8 @@ public class GrammarIf {
 			} else {
 				System.out.println("parenteses  if abre!");
 			}
-
 		}
 
+		return balanceKey.isEmpty();
 	}
-
 }

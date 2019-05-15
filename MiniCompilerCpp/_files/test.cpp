@@ -1,4 +1,3 @@
 //int a,c = id < ,b,v;
 
-if(){}else{if(){}else{}
-
+if(){if(){}else{}}else{if(){}else{}}
