@@ -39,7 +39,7 @@ public class Parser {
 
 	public static void previousToken() {
 		position--;
-		currentSymbol = array.get(position);
+		currentSymbol = array.get(position); 
 
 	}
 

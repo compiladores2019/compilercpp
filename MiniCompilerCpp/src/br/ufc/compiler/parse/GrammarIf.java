@@ -89,7 +89,7 @@ public class GrammarIf {
 					} else {
 						System.out.println("Chave if abre!");
 					}
-				} else {
+				} else { 
 
 					System.out.println("parenteses if fecha!");
 				}
