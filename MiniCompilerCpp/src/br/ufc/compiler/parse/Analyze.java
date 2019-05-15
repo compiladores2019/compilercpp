@@ -4,6 +4,7 @@ public class Analyze {
 
 	public static void start(){
 		GrammarKind.kind();
+		
 	}
 	
 }

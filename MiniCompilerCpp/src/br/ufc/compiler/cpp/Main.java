@@ -40,10 +40,10 @@ public class Main {
 			Analyze.start();
 			
 			LexiconAnalyzer.getSymbolTable().clear(); //limpando a tabela dos tokens
-			Parser.destroy(); // limpando array e resetando a posição do apontador de índice
+		Parser.destroy(); // limpando array e resetando a posição do apontador de índice
 		   
-			
-		/*	JFrame window = new JFrame("Symbol Table");
+		/*	
+			JFrame window = new JFrame("Symbol Table");
 			JPanel panel = new JPanel();
 
 			window.add(panel);
@@ -74,7 +74,7 @@ public class Main {
 			window.setVisible(true);
 			scroll.setVisible(true);
 			
-      */
+    */
 			
 		//}
 
