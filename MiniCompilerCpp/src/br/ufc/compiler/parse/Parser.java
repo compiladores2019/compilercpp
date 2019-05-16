@@ -25,6 +25,7 @@ public class Parser {
 		array = new ArrayList<Token>();
 		array.addAll(LexiconAnalyzer.getSymbolTable());
 		currentSymbol = array.get(position);
+		array.add(new Token(OTHER, "$", "final block-code marking", currentSymbol.getLine()));
 		position++;
 
 	}

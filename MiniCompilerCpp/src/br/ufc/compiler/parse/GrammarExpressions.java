@@ -6,20 +6,32 @@ import br.ufc.compiler.lexicon.Token;
 import static br.ufc.compiler.lexicon.Token.Kind.*;
 
 import static br.ufc.compiler.parse.Parser.*;
+import static br.ufc.compiler.parse.GrammarKind.*;
+import static br.ufc.compiler.parse.GrammarRelational.*;
+import static br.ufc.compiler.parse.GrammarLogic.*;
 
 public class GrammarExpressions {
 
     private static Stack<Token> balanceParentheses = new Stack<>();
+    private static Stack<Token> balanceParenthesesIf = new Stack<>();
 
-    //controle de precedencia de simbolos lógicos e relacionais
-    private  static Stack<Token> controlOperator = new Stack<>();
 
     static {
         balanceParentheses.push(new Token(OTHER, "$", "end-of-stack marking", currentSymbol.getLine()));
-        controlOperator.push(new Token(OTHER, "#", "end-of-stack marking", currentSymbol.getLine()));
+        balanceParenthesesIf.push(new Token(OTHER, "$", "end-of-stack marking", currentSymbol.getLine()));
     }
 
-    private static boolean openParentheses() {
+    //limpa a pilha de uma expressão finalizada
+    static void clearStackParentheses(){
+        balanceParentheses.clear();
+    }
+
+    //limpa a pilha de uma expressão if finalizada
+    static void clearStackParenthesesIf(){
+        balanceParenthesesIf.clear();
+    }
+
+    public static boolean openParentheses() {
 
         // verifica se a expressão contém parenteses
         if (currentSymbol.getLexeme().equals("(")) {
@@ -31,7 +43,7 @@ public class GrammarExpressions {
         return false;
     }
 
-    private static boolean closeParentheses() {
+    public static boolean closeParentheses() {
         // verifica se após ler algum ID ou valor ele fecha paranteses , exempo
         // (a) ..
         if (currentSymbol.getLexeme().equals(")") && balanceParentheses.peek().getLexeme().equals("(")) {
@@ -43,24 +55,93 @@ public class GrammarExpressions {
         return false;
     }
 
-    /*
-     * Expressoes Aritméticas ainda não terminada, esta um exemplo simples sem
-     * parenteses, lembrando que quando ele ler , ou ; em uma expressão, ele
-     * precisa abortar,pois no caso de , se torna uma pipeline de declarações
-     * (atribuições) e se for ; denota fim de comando. COMPLETA, MAS NÃO
-     * ABRANGE TUDO
-     */
-    public static void expressionArithms() {
+    public static boolean openParenthesesIf() {
+
+        // verifica se a expressão contém parenteses
+        if (currentSymbol.getLexeme().equals("(")) {
+            System.out.print(currentSymbol.getLexeme() + " ");
+            balanceParenthesesIf.push(currentSymbol);// empilha o parenteses
+            nextToken(); // avança para o próximo token
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean closeParenthesesIf() {
+        // verifica se após ler algum ID ou valor ele fecha paranteses , exempo
+        // (a) ..
+        if (currentSymbol.getLexeme().equals(")") && balanceParenthesesIf.peek().getLexeme().equals("(")) {
+            System.out.print(currentSymbol.getLexeme() + " ");
+            balanceParenthesesIf.pop();// desempilha o parenteses
+            nextToken(); // avança para o próximo token
+            return true;
+        }
+        return false;
+    }
+
+
+    private static void validateExpression(){
+
+        while(currentSymbol.getLexeme().equals(")") && balanceParentheses.peek().getLexeme().equals("("))
+        {
+            if(closeParentheses()) continue;
+            else
+                nextToken();
+        }
+
+        if(currentSymbol.getLexeme().equals(";")){
+
+            if(balanceParentheses.peek().getLexeme().equals("$")){
+                nextToken();
+                return;
+            }else{
+
+                System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+                        + currentSymbol.getLexeme() + "\n expected: ')'");
+                  return;
+            }
+        }
+        else
+        if(currentSymbol.getLexeme().equals(",")) {
+           declaration();// leu vírgula, então é uma declaração? esperamos que smim
+        }
+    }
+
+    private static void validateExpressionIf(){
+
+        while(currentSymbol.getLexeme().equals(")") && balanceParenthesesIf.peek().getLexeme().equals("("))
+        {
+            if(closeParenthesesIf()) continue;
+            else
+                nextToken();
+        }
+
+        if(currentSymbol.getLexeme().equals(")")){
+            if(balanceParenthesesIf.peek().getLexeme().equals("$")){
+                nextToken();
+                return;
+            }else{
+                System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+                        + currentSymbol.getLexeme() + "\n expected: ')'");
+                return;
+            }
+
+        }else{
+
+            if(currentSymbol.getKind().equals(OP_REL) || currentSymbol.getKind().equals(OP_LOG)) {
+                nextToken();
+                expressionIf();// verifico se não tem algum parenteses sem fechar, se Ok e o proximo simbolo
+                // não for ) pq? pq seria o parenteses de final if, como não é, ele vai ver se tem outra expressão if
+                // mas para isso ele precisa ler algum relacional ou operador lógico
+            }
+        }
+
+    }
+
+
+    public static void expression() {
 
         openParentheses();
-
-        if (currentSymbol.getLexeme().equals(",")
-                || currentSymbol.getLexeme().equals(";") && balanceParentheses.peek().getLexeme().equals("$")) {
-            // erro sintático
-            System.out.println("abortando..");
-            nextToken();
-            return;
-        }
 
         if (currentSymbol.getKind().equals(ID) ||
                 currentSymbol.getKind().equals(INT) ||
@@ -77,10 +158,9 @@ public class GrammarExpressions {
 
                 openParentheses();
 
-                expressionArithms();
+                expression();
 
             } else {
-
 
                 if (currentSymbol.getLexeme().matches("[,|;]")) {
 
@@ -91,6 +171,7 @@ public class GrammarExpressions {
 
                         if (currentSymbol.getLexeme().equals(",")
                                 && balanceParentheses.peek().getLexeme().equals("$")) {
+                            clearStackParentheses();
                             return;
 
                         } else {
@@ -107,7 +188,7 @@ public class GrammarExpressions {
                     if (currentSymbol.getKind().equals(OP_ARITHM)) {
                         System.out.print(currentSymbol.getLexeme() + " ");
                         nextToken();
-                        expressionArithms();
+                        expression();
 
                     } else if (currentSymbol.getLexeme().equals(")")) {
 
@@ -121,6 +202,7 @@ public class GrammarExpressions {
                         if (currentSymbol.getLexeme().matches("[,|;]")
                                 && balanceParentheses.peek().getLexeme().equals("$")) {
                             if (currentSymbol.getLexeme().equals(";")) {
+                                clearStackParentheses();
                                 nextToken();
                                 return;
                             } else
@@ -130,14 +212,16 @@ public class GrammarExpressions {
                             if (currentSymbol.getKind().equals(OP_ARITHM)) {
                                 System.out.print(currentSymbol.getLexeme() + " ");
                                 nextToken();
-                                expressionArithms();
+                                expression();
 
                             } else {
 
-                                if (currentSymbol.getKind().equals(OP_LOG)
-                                        || currentSymbol.getKind().equals(OP_REL)) {
-                                    nextToken();
-                                    expressionArithms();
+                                if (currentSymbol.getKind().equals(OP_LOG)) {
+
+                                    //previousToken(); // para começar de id &&
+                                    opLog();
+                                    validateExpression();
+
                                 } else {
 
                                     System.out.println("Syntax error line -> " + currentSymbol.getLine()
@@ -151,153 +235,118 @@ public class GrammarExpressions {
 
                         if (currentSymbol.getKind().equals(OP_REL)) {
 
-                            controlOperator.push(currentSymbol);
-                            // empilha a precedencia
-                            // pois não pode haver id + id && .. pois não é algo relacional
-                            //mas id [<,>,<=,>=,==,!=] id && é valido, ou seja quando ler o token [||,&&] ele verifica se tem
-                            // esse simbolo na pilha, se sim, desempilha, se não, erro de sintaxe
-                            System.out.print(currentSymbol.getLexeme() + " ");
-                            nextToken();
-                            expressionArithms();
+                            opRel();
+                            expression();
 
                         } else {
 
                             if(currentSymbol.getKind().equals(OP_LOG)){
-                                System.out.print("peek: "+controlOperator.peek().getLexeme());
-                                if(controlOperator.peek().getKind().equals(OP_REL)) {
-                                    controlOperator.pop();
-                                    expressionArithms();
-                                }
-                            }else
-                            System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
-                                    + currentSymbol.getLexeme() + "\n expected: , or ; or op arithm");
-                            return;
+                                System.out.print(currentSymbol.getLexeme() + " ");
+                                    opLog();
+                                   validateExpression();
+
+                            }else {
+                                System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+                                        + currentSymbol.getLexeme() + "\n expected: , or ; or op arithm");
+                                return;
+                            }
                         }
                     }
             }
         }
 
     }
-/*
-    public static void expressionForIf() {
+
+    public static void expressionIf() {
 
         openParentheses();
-        // aborto a operação se encontrar =, ou =(, ou =; ou =(; que é um
-        // erro e obvio a pilha tem de estar zerada
-        // o que significa que se em algum nível de recursão isso coincidir,
-        // temo uma situação válida
-        // por exemplo (id + id), parenteses balanceados e a marca de fim de
-        // expressão,mas isso nunca será
-        // verificado no final, apenas no início
-        if (currentSymbol.getLexeme().equals(",")
-                || currentSymbol.getLexeme().equals(";") && balanceParentheses.peek().getLexeme().equals("$")) {
-            // erro sintático
-            System.out.println("abortando..");
-            nextToken();
-            return;
-        }
-        // o token autal precisa ser um desses
-        if (currentSymbol.getKind().equals(Kind.ID) || currentSymbol.getKind().equals(Kind.INT)
-                || currentSymbol.getKind().equals(Kind.FLOAT)) {
+
+        if (currentSymbol.getKind().equals(ID) ||
+                currentSymbol.getKind().equals(INT) ||
+                currentSymbol.getKind().equals(FLOAT)) {
 
             System.out.print(currentSymbol.getLexeme() + " ");
             nextToken();// o proximo termo precisa ser uma opreação? não
-            // necessariamente
             closeParentheses();
 
-            if (currentSymbol.getKind().equals(Kind.OP_ARITHM)) {
+            //caso para if(id).. expressão unitária, para algum bool
+            if (balanceParenthesesIf.peek().getLexeme().equals("$") && currentSymbol.getLexeme().equals(")")) {
+                return;
+            } else
+
+                  if (currentSymbol.getKind().equals(OP_ARITHM)) {
                 System.out.print(currentSymbol.getLexeme() + " ");
                 nextToken();
 
-                openParentheses(); // verifica se abre outro parenteses ex: ...
-                // id + (
+                openParentheses(); // verifica se abre outro parenteses ex: ...// id + (
 
-                expressionArithms();
+                expressionIf();
 
             } else {
-                // se o termo for de final de comando ou de pipe de
-                // declarações
-                // ele só entra aqui quando o token for esses delimitadores de
-                // expressão
-                if (currentSymbol.getLexeme().matches("[,|;]")) {
-                    // closeParentheses();
-                    if (currentSymbol.getLexeme().equals(";") && balanceParentheses.peek().getLexeme().equals("$")) {
-                        nextToken();
-                        return;
-                    } else {
+                // apos todos os parenteses aninhados podemos ter outra operacao
+                // ex: (id + (a + id)) + (id..
+                if (currentSymbol.getKind().equals(OP_ARITHM)) {
+                    System.out.print(currentSymbol.getLexeme() + " ");
+                    nextToken();
+                    expressionIf();
 
-                        if (currentSymbol.getLexeme().equals(",")
-                                && balanceParentheses.peek().getLexeme().equals("$")) {
-                            // nextToken();
-                            return;
-                        } else {
-                            // lançar uma exceção aqui
-                            System.out.println("Syntax error line -> " + currentSymbol.getLine()
-                                    + "\n cause by: missing ')' before " + currentSymbol.getLexeme());
-                            return;
-                        }
+                } else if (currentSymbol.getLexeme().equals(")")) {
+
+                    while (currentSymbol.getLexeme().equals(")") && balanceParentheses.peek().getLexeme().equals("(")) {
+                        if (closeParentheses())
+                            continue;
+                        else
+                            nextToken();
                     }
-                } else
-                    // apos todos os parenteses aninhados podemos ter outra operacao
-                    // ex: (id + (a + id)) + (id..
-                    if (currentSymbol.getKind().equals(Kind.OP_ARITHM)) {
+                    if (currentSymbol.getKind().equals(OP_ARITHM)) {
                         System.out.print(currentSymbol.getLexeme() + " ");
                         nextToken();
-                        expressionArithms();
+                        expressionIf();
 
-                    } else if (currentSymbol.getLexeme().equals(")")) {
-
-                        while (currentSymbol.getLexeme().equals(")") && balanceParentheses.peek().getLexeme().equals("(")) {
-                            if (closeParentheses())
-                                continue;
-                            else
-                                nextToken();
-                        }
-                        if (currentSymbol.getLexeme().matches("[,|;]")
-                                && balanceParentheses.peek().getLexeme().equals("$")) {
-                            if (currentSymbol.getLexeme().equals(";")) {
-                                nextToken();
-                                return;
-                            } else
-                                return;
-                        } else {
-
-                            if (currentSymbol.getKind().equals(Kind.OP_ARITHM)) {
-                                System.out.print(currentSymbol.getLexeme() + " ");
-                                nextToken();
-                                expressionArithms();
-
-                            } else {
-
-                                if (currentSymbol.getKind().equals(Kind.OP_LOG)
-                                        || currentSymbol.getKind().equals(Kind.OP_REL)) {
-                                    nextToken();
-                                    expressionArithms();
-                                } else {
-
-                                    System.out.println("Syntax error line -> " + currentSymbol.getLine()
-                                            + "\n cause by: missing operator arithmetic before "
-                                            + currentSymbol.getLexeme());
-                                    return;
-                                }
-                            }
-                        }
                     } else {
-                        // lançar uma exeção aqui
-                        if (currentSymbol.getKind().equals(Kind.OP_LOG) || currentSymbol.getKind().equals(Kind.OP_REL)) {
-                            System.out.print(currentSymbol.getLexeme() + " ");
+
+                        if (currentSymbol.getKind().equals(OP_LOG)
+                                || currentSymbol.getKind().equals(OP_REL)) {
                             nextToken();
-                            expressionArithms();
+                            expressionIf();
                         } else {
-                            System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
-                                    + currentSymbol.getLexeme() + "\n expect: , or ;");
+
+                            System.out.println("Syntax error line -> " + currentSymbol.getLine()
+                                    + "\n cause by: missing operator arithmetic before "
+                                    + currentSymbol.getLexeme());
                             return;
                         }
                     }
+
+                } else {
+
+                    if (currentSymbol.getKind().equals(OP_REL)) {
+                        System.out.print(currentSymbol.getLexeme() + " ");
+                        opRelIf();
+
+                        System.out.println("retornei aqui!");
+
+                        //quando terminar o metodo opRel ele verifica se o token atual é um desses, se for ele chama expressãoIf
+                        //caso contrario ele verifica a expressao e valida a mesma ou não, caso faltou algo, em OpRel terá erro de sintaxe
+                        if(currentSymbol.getKind().equals(ID) ||
+                                currentSymbol.getKind().equals(INT)||
+                                currentSymbol.getKind().equals(FLOAT)) {
+                            nextToken();
+                            expressionIf();
+                        }else
+                             validateExpressionIf();
+                           //preciso validar, parenteses e a construção
+                          //expressionIf();
+                    } else {
+                        System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+                                + currentSymbol.getLexeme() + "\nexpect: op logic or ");
+                                  return;
+                    }
+                }
             }
+
+
         }
-
-    } */
-
+    }
 
 }

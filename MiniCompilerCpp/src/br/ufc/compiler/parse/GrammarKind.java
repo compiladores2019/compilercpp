@@ -16,6 +16,7 @@ public class GrammarKind {
 
 	public static void kind() {
 
+		/*
 		if (currentSymbol.getKind().equals(INT) ||
 				currentSymbol.getKind().equals(CHAR) ||
 				currentSymbol.getKind().equals(FLOAT)) {
@@ -40,15 +41,17 @@ public class GrammarKind {
 				System.out.println("Erro sintático -> Linha " + currentSymbol.getLine());
 			}
 		}
-		
-		
-		if(currentSymbol.getKind().equals(IF))
-			 GrammarIf.commandIf();
+		*/
+
+		expressionIf();
+
+		//if(currentSymbol.getKind().equals(IF))
+		//	 GrammarIf.commandIf();
 		
 
 	}
 	
-	private static void declaration() {
+	public static void declaration() {
 
 		//falta achar uma forma de tratar o caso quando não tem o ; no final
    
@@ -62,7 +65,7 @@ public class GrammarKind {
 				if(currentSymbol.getLexeme().equals("=")) {
 					System.out.print(currentSymbol.getLexeme()+" ");
 				    nextToken();
-					expressionArithms();
+					expression();
 					if(currentSymbol.getLexeme().equals(","))
 						declaration();
 				}else
@@ -85,7 +88,7 @@ public class GrammarKind {
 
 					System.out.print(currentSymbol.getLexeme() + " ");
 					nextToken();
-					expressionArithms();
+					expression();
 
 					if (currentSymbol.getLexeme().equals(",")) {
 						declaration();
@@ -102,43 +105,13 @@ public class GrammarKind {
 						declaration();
 
 					}else{
-						System.out.println("11Syntax error line -> " + currentSymbol.getLine() +
+						System.out.println("Declaration error:\nSyntax error line -> " + currentSymbol.getLine() +
 								"\ncause by: "+ currentSymbol.getLexeme());
 						return;
 					}
 
 				}else System.out.println("erroooooo");
 		}
-	}
-
-
-	private static void nextID() {
-		nextToken();
-
-		if (currentSymbol.getLexeme().equals(";")) {
-			System.out.println(currentSymbol);
-			return;
-		}
-
-		System.out.println(currentSymbol.getLexeme());
-
-		if (currentSymbol.getLexeme().equals(",") || currentSymbol.getLexeme().equals("=")) {
-
-			nextID();
-		}
-
-		else if (currentSymbol.getKind().equals(ID) || currentSymbol.getLexeme().equals(INT)) {
-			nextID();
-		}
-
-		else
-			System.out.println("Erro sitatico!s");
-
-	}
-
-
-	private static void condition(){
-		
 	}
 
 }

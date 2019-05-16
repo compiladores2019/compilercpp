@@ -43,7 +43,7 @@ public class Main {
 		Parser.destroy(); // limpando array e resetando a posição do apontador de índice
 
 
-		/* JFrame window = new JFrame("Symbol Table");
+	/*	 JFrame window = new JFrame("Symbol Table");
 			JPanel panel = new JPanel();
 			window.add(panel);
 			window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,8 +67,8 @@ public class Main {
 			window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			window.setVisible(true);
 			scroll.setVisible(true);
-*/
 
+*/
 
 		//}
 
