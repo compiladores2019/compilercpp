@@ -71,6 +71,7 @@ public class GrammarRelational {
             if (currentSymbol.getKind().equals(ID) ||
                     currentSymbol.getKind().equals(INT) ||
                     currentSymbol.getKind().equals(FLOAT)) {
+
                 System.out.print(currentSymbol.getLexeme() + " ");
                 nextToken();
                 closeParenthesesIf();
@@ -85,7 +86,7 @@ public class GrammarRelational {
                             currentSymbol.getKind().equals(FLOAT)) {
                         System.out.print(currentSymbol.getLexeme() + " ");
                         nextToken();
-                        opRel();
+                        opRelIf();
                     }else{
                         System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
                                 + currentSymbol.getLexeme() + "\n expected: '(' or identifier");
@@ -97,13 +98,13 @@ public class GrammarRelational {
                     if(currentSymbol.getLexeme().equals(")")){
                         System.out.print(currentSymbol.getLexeme() + " ");
                         return;
-                    }
-                    else {
+
+                    } else {
 
                         if(currentSymbol.getKind().equals(ID) ||
                                 currentSymbol.getKind().equals(INT)||
                                 currentSymbol.getKind().equals(FLOAT)) {
-                            //pode ser que (5 + 6) < ? pode ser um id? encerro.
+                            nextToken();
                             return;
                         }else{
                             System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "

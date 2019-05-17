@@ -4,8 +4,7 @@ import static br.ufc.compiler.lexicon.Token.Kind.ELSE;
 import static br.ufc.compiler.lexicon.Token.Kind.IF;
 import static br.ufc.compiler.parse.Parser.currentSymbol;
 import static br.ufc.compiler.parse.Parser.nextToken;
-import static br.ufc.compiler.parse.Parser.size;
-import static br.ufc.compiler.parse.Parser.getPosition;
+import static br.ufc.compiler.parse.GrammarExpressions.*;
 
 import java.util.Stack;
 
@@ -25,26 +24,25 @@ public class GrammarIf {
 	private static boolean ifError() {
 
 		if (currentSymbol.getKind().equals(IF)) {
+			System.out.print(currentSymbol.getLexeme() + " ");
 			nextToken();
 
 			if (currentSymbol.getLexeme().equals("(")) {
-				System.out.println(currentSymbol.getLexeme() + " ");
+				System.out.print(currentSymbol.getLexeme() + " ");
 				nextToken();
+				expressionIf();
+				//nextToken();
 
-				// expressionForIf();
 				if (currentSymbol.getLexeme().equals(")")) {
-					System.out.println(currentSymbol.getLexeme() + " ");
+					System.out.print(currentSymbol.getLexeme() + " ");
 					nextToken();
 
 					if (currentSymbol.getLexeme().equals("{")) {
-						System.out.println(currentSymbol.getLexeme() + " ");
+						System.out.print(currentSymbol.getLexeme() + " ");
 						nextToken();
-
 						balanceKey.push(new Token(Kind.DEL, "{", "closing-key-to-this-line", currentSymbol.getLine()));
 
-						// declaration()?
-						// Attbibr()?
-						// if?
+						GrammarKind.kind();
 
 						if (currentSymbol.getKind().equals(IF))
 							ifError();
@@ -65,36 +63,20 @@ public class GrammarIf {
 									balanceKey.push(new Token(Kind.DEL, "{", "closing-key-to-this-line",
 											currentSymbol.getLine()));
 
-									// declaration()?
-									// Attbibr()?
-									// if?
+
+
 									if (currentSymbol.getKind().equals(IF))
 										ifError();
 
-									if (currentSymbol.getLexeme().equals("}")) {
+									if (currentSymbol.getLexeme().equals("}") && balanceKey.peek().getLexeme().equals("{")) {
 										nextToken();
 										balanceKey.pop();
-
-									} else {
-										System.out.println("Chave else  fecha!");
-
 									}
-								} else {
-									System.out.println("chave else fecha");
 								}
 							}
-						} else {
-							System.out.println("Chave if fecha!");
 						}
-					} else {
-						System.out.println("Chave if abre!");
 					}
-				} else { 
-
-					System.out.println("parenteses if fecha!");
 				}
-			} else {
-				System.out.println("parenteses  if abre!");
 			}
 		}
 

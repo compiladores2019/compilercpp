@@ -80,9 +80,15 @@ public class GrammarLogic {
             if (currentSymbol.getLexeme().equals(")")) return;
             else {
 
-                System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
-                        + currentSymbol.getLexeme() + "\n expected: op logic");
+                if(currentSymbol.getKind().equals(OP_LOG) || currentSymbol.getLexeme().equals("=="))
                 return;
+                else {
+                    System.out.println("\nSyntax error line -> " + currentSymbol.getLine() +
+                            "\n cause by: "
+                            + currentSymbol.getLexeme() + "\n expected: op logic");
+                    return;
+                }
+
             }
         }
     }
