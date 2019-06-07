@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
+import static br.ufc.compiler.lexicon.Token.Kind.*;
 import br.ufc.compiler.lexicon.Token.Kind;
 
 public class LexiconAnalyzer {
 
-	private static LinkedHashSet<Token> hm = new LinkedHashSet<>();
+	private static Set <Token> hm = new LinkedHashSet<>();
 	private StringBuilder sb = new StringBuilder();
 	private StringBuilder textBuilder = new StringBuilder();
 	private SymbolConsumer sc = new SymbolConsumer(hm);
@@ -36,7 +38,6 @@ public class LexiconAnalyzer {
 		while (br.ready()) {
 			String readLine = br.readLine();
 			collectLines(readLine, ++j);
-
 		}
 
 		fr.close();
@@ -47,6 +48,10 @@ public class LexiconAnalyzer {
 
 		if (isText)
 			System.out.println("string couldn't find end of text in line: " + stringUnboundedRow);
+	
+		if(!commentActivated && !isText) {
+		     setKindIdentifiers();
+		}
 
 	}
 
@@ -82,7 +87,7 @@ public class LexiconAnalyzer {
 					verifyLexeme(row);
 					sc.treatmentDelimiter(c, row);
 				} else if (Util.isOther(ch)) {
-					hm.add(new Token(Kind.OTHER, ch, "OTHER", row));
+					hm.add(new Token(Kind.OTHER, ch, "OTHER",null, row));
 					sb.setLength(0);
 				}else 
 		
@@ -98,7 +103,7 @@ public class LexiconAnalyzer {
 				}else{
 
 					if(Util.isUnknow(ch) && c !='"') 
-						hm.add(new Token(Kind.OTHER, ch, "UNKNOW", row));
+						hm.add(new Token(Kind.OTHER, ch, "UNKNOW",null, row));
 						
 					verifyLexeme(row);
 				}
@@ -108,7 +113,7 @@ public class LexiconAnalyzer {
 			} else if (c == '"') {
 				isText = false;
 				textBuilder.append('"');
-				hm.add(new Token(Kind.STRING, textBuilder.toString(), '"' + "abc" + '"', "STRING", row));
+				hm.add(new Token(Kind.STRING, textBuilder.toString(), '"' + "abc" + '"', "STRING",null, row));
 				textBuilder.setLength(0);
 			} else if (!commentActivated)
 				verifyLexeme(row);
@@ -127,13 +132,62 @@ public class LexiconAnalyzer {
 			sc.treatmentRW(sb, row);
 		else if (Util.isModifier(lexeme))
 			sc.treamentmentModifier(sb, row);
+		else if(Util.isNumberInteger(lexeme) || Util.isNumberFloat(lexeme))
+			sc.treatmentNumbers(sb, row);
 		else if (Util.isNotIdentifier(lexeme) || Util.isIdentifier(lexeme) || Util.isLetter(lexeme))
 			sc.treatmentIndetifier(sb, row);
-		else
-			sc.treatmentNumbers(sb, row);
+	
 	}
 
-	public static LinkedHashSet<Token> getSymbolTable() {
+	
+	private void setKindIdentifiers() {
+		
+		Kind kind = OTHER;
+		boolean isAttrib = false;
+        boolean isKind = false;
+		
+		for(Token t: hm) {
+			
+			if((t.getKind().equals(CHAR) ||
+			   t.getKind().equals(INT) ||
+			   t.getKind().equals(FLOAT)) && !isKind){
+					
+				kind = t.getKind();
+				isKind = true;
+			}
+			
+			if(!t.getKind().equals(kind)) {
+		
+				if(t.getLexeme().equals("="))
+					isAttrib = true;
+				
+				if(t.getKind().equals(ID) && !isAttrib) {
+				
+					t.setIdKind(kind);
+				}				
+				
+				if(t.getLexeme().equals(",")) {
+					isAttrib = false;
+					
+				}else {
+					
+					if(t.getLexeme().equals(";")) {
+						
+						kind = OTHER;
+						isKind = false;
+						isAttrib = false;
+					}
+				}
+				
+			}
+			
+		}
+		
+		
+	}
+	
+	
+	public static Set<Token> getSymbolTable() {
 		return hm;
 	}
 

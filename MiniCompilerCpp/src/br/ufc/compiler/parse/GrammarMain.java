@@ -8,13 +8,13 @@ import static br.ufc.compiler.parse.GrammarIf.*;
 import static br.ufc.compiler.parse.Parser.*;
 import static br.ufc.compiler.parse.GrammarKind.*;
 
-
 public class GrammarMain {
 
-	static{
+	static {
 		InitParser();
 	}
-   //algumas coiasas incompletas
+
+	// algumas coiasas incompletas
 	public static void expressionMain() {
 
 		if (currentSymbol.getKind().equals(INT)) {
@@ -36,10 +36,15 @@ public class GrammarMain {
 						if (currentSymbol.getLexeme().equals("{")) {
 							System.out.println(currentSymbol.getLexeme() + " ");
 							nextToken();
+						
 							kind();
-							//attribuition();
+							attribuition();
 							commandIf();
 
+							if (currentSymbol.getLexeme().equals("}")) {
+								System.out.println(currentSymbol.getLexeme() + " ");
+							}
+							
 						}
 					}
 				}

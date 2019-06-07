@@ -10,21 +10,24 @@ public class Token {
 	private int line;
 	private Object value;
 	private String lexeme;
+	private Kind idKind;
 	private String describe;
 
-	public Token(Kind kind, String lexeme, String describe, int line) {
+	public Token(Kind kind, String lexeme, String describe,Kind idKind, int line) {
 		this.kind = kind;
 		this.lexeme = lexeme;
 		this.line = line;
+		this.idKind = idKind;
 		this.describe = describe;
 	}
 
-	public Token(Kind kind, Object value, String lexeme, String describe, int line) {
+	public Token(Kind kind, Object value, String lexeme, String describe,Kind idKind, int line) {
 
 		this.kind = kind;
 		this.value = value;
 		this.lexeme = lexeme;
 		this.describe = describe;
+		this.idKind = idKind;
 		this.line = line;
 	}
 
@@ -32,10 +35,18 @@ public class Token {
 		return kind;
 	}
 
+	public void setIdKind(Kind kind) {
+		this.idKind = kind;
+	}
+
+	public Kind getIdKind() {
+		return idKind;
+	}
+
 	public void setKind(Kind kind) {
 		this.kind = kind;
 	}
-
+	
 	public int getLine() {
 		return line;
 	}
@@ -70,9 +81,9 @@ public class Token {
 
 	@Override
 	public String toString() {
-		return "Token [kind=" + kind + ", line=" + line + ", value=" + value + ", lexeme=" + lexeme + ", describe="
-				+ describe + "]";
+		return "Token [kind=" + kind + ", line=" + line + ", value=" + value + ", lexeme=" + lexeme + ", idKind="
+				+ idKind + ", describe=" + describe + "]";
 	}
 
-	
+
 }

@@ -7,6 +7,7 @@ import br.ufc.compiler.lexicon.Token.Kind.*;
 import br.ufc.compiler.lexicon.LexiconAnalyzer;
 
 import static br.ufc.compiler.lexicon.Token.Kind.OTHER;
+import static br.ufc.compiler.parse.Parser.currentSymbol;
 
 public class Parser {
 
@@ -24,14 +25,15 @@ public class Parser {
 
 		array = new ArrayList<Token>();
 		array.addAll(LexiconAnalyzer.getSymbolTable());
+		array.add(new Token(OTHER,"$","end-marking-stack",null,0));
 		currentSymbol = array.get(position);
-		//array.add(new Token(OTHER, "$", "final block-code marking", currentSymbol.getLine()));
 		position++;
 
 	}
 
 	public static void nextToken() {
 
+	
 		if (position < array.size()) {
 			currentSymbol = array.get(position);
 			position++;
@@ -39,8 +41,8 @@ public class Parser {
 	}
 
 	public static void previousToken() {
-		position--;
-		currentSymbol = array.get(position); 
+		position -= 2;
+		currentSymbol = array.get(position);
 
 	}
 
@@ -52,8 +54,5 @@ public class Parser {
 		return position;
 	}
 
-	// void parser(){
-
-	// }
 
 }
