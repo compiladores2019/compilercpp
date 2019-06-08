@@ -2,21 +2,21 @@ package br.ufc.compiler.cpp;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
 
 import br.ufc.compiler.lexicon.LexiconAnalyzer;
 import br.ufc.compiler.lexicon.Token;
-import br.ufc.compiler.parse.Analyze;
-import br.ufc.compiler.parse.Parser;
+import br.ufc.compiler.lexicon.Token.Kind;
 
 public class Main {
 
@@ -30,7 +30,7 @@ public class Main {
 		//if (getValue == JFileChooser.APPROVE_OPTION) {
 
 		//File isSelectedFile = chooser.getSelectedFile();
-
+		
 		LexiconAnalyzer ln = new LexiconAnalyzer();
 
 		//ln.builderSymbolTable(isSelectedFile.getAbsolutePath());
@@ -45,7 +45,7 @@ public class Main {
      	//Parser.destroy(); // limpando array e resetando a posição do apontador de índice
 
 
-	JFrame window = new JFrame("Symbol Table");
+        	JFrame window = new JFrame("Symbol Table");
 			JPanel panel = new JPanel();
 			window.add(panel);
 			window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,7 +71,7 @@ public class Main {
 			window.setVisible(true);
 			scroll.setVisible(true);
 
-   
+      
 
 		//}
 

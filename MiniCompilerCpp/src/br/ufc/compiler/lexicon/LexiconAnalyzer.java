@@ -1,18 +1,26 @@
 package br.ufc.compiler.lexicon;
 
+import static br.ufc.compiler.lexicon.Token.Kind.CHAR;
+import static br.ufc.compiler.lexicon.Token.Kind.FLOAT;
+import static br.ufc.compiler.lexicon.Token.Kind.ID;
+import static br.ufc.compiler.lexicon.Token.Kind.INT;
+import static br.ufc.compiler.lexicon.Token.Kind.OTHER;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
-import static br.ufc.compiler.lexicon.Token.Kind.*;
 import br.ufc.compiler.lexicon.Token.Kind;
 
 public class LexiconAnalyzer {
 
 	private static Set <Token> hm = new LinkedHashSet<>();
+	private static Map<String,Kind> idents = new HashMap<>(); 
 	private StringBuilder sb = new StringBuilder();
 	private StringBuilder textBuilder = new StringBuilder();
 	private SymbolConsumer sc = new SymbolConsumer(hm);
@@ -52,7 +60,7 @@ public class LexiconAnalyzer {
 		if(!commentActivated && !isText) {
 		     setKindIdentifiers();
 		}
-
+		
 	}
 
 	private void collectLines(String line, int row) {
@@ -139,21 +147,34 @@ public class LexiconAnalyzer {
 	
 	}
 
-	
 	private void setKindIdentifiers() {
+	
+		Set <Token> hmTemp = hm;
 		
-		Kind kind = OTHER;
+		Kind kind = null;
 		boolean isAttrib = false;
         boolean isKind = false;
 		
-		for(Token t: hm) {
+		for(Token t: hmTemp) {
 			
 			if((t.getKind().equals(CHAR) ||
-			   t.getKind().equals(INT) ||
-			   t.getKind().equals(FLOAT)) && !isKind){
+			    t.getKind().equals(INT)  ||
+			    t.getKind().equals(FLOAT)) && !isKind){
 					
 				kind = t.getKind();
 				isKind = true;
+			}
+			
+			Kind kindId = idents.get(t.getLexeme());
+			boolean contains = idents.containsKey(t.getLexeme());
+			
+			if(contains){
+				
+				 if(t.getIdKind() == null){
+					//System.out.println("antes: "+t.getLexeme() + " "+kindId + " "  +t.getLine());
+					 t.setIdKind(kindId);
+					 //System.out.println("depois: "+t.getLexeme() + " "+t.getIdKind()+ " " + t.getLine());
+				 }
 			}
 			
 			if(!t.getKind().equals(kind)) {
@@ -164,7 +185,19 @@ public class LexiconAnalyzer {
 				if(t.getKind().equals(ID) && !isAttrib) {
 				
 					t.setIdKind(kind);
+					idents.put(t.getLexeme(),kind);
 				}				
+				
+				if(isAttrib){
+					
+					if(idents.containsKey(t.getLexeme())){
+						
+						if(t.getIdKind() == null){
+							t.setIdKind(idents.get(t.getLexeme()));
+						}
+						
+					}
+				}
 				
 				if(t.getLexeme().equals(",")) {
 					isAttrib = false;
@@ -173,17 +206,16 @@ public class LexiconAnalyzer {
 					
 					if(t.getLexeme().equals(";")) {
 						
-						kind = OTHER;
+						kind = null;
 						isKind = false;
 						isAttrib = false;
 					}
 				}
 				
 			}
-			
+		
 		}
-		
-		
+				
 	}
 	
 	

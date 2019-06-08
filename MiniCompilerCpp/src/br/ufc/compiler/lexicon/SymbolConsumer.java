@@ -241,7 +241,7 @@ public class SymbolConsumer {
 	
 		if((i + 1) < com.length()) {
 			str = str.concat(String.valueOf(com.charAt(i + 1)));
-			System.out.println(str+" na linha "+ row);
+			//System.out.println(str+" na linha "+ row);
 		}
 		switch (c) {
 		
