@@ -6,20 +6,19 @@ import static br.ufc.compiler.parse.GrammarArithm.*;
 import static br.ufc.compiler.parse.GrammarLogic.*;
 import java.util.Stack;
 
-
 import br.ufc.compiler.lexicon.Token;
+import br.ufc.compiler.lexicon.Token.Kind;
 
 public class GrammarRelational {
-	
+
 	private static Stack<Token> balanceParentheses = new Stack<>();
-	
+
 	static {
-	
-		//InitParser();
-		balanceParentheses.push(new Token(OTHER, "$", "end-of-stack marking", null,currentSymbol.getLine()));
+
+		balanceParentheses.push(new Token(OTHER, "$", "end-of-stack marking", null, currentSymbol.getLine()));
 
 	}
-	
+
 	private static boolean openParentheses() {
 
 		// verifica se a expressão contém parenteses
@@ -43,8 +42,7 @@ public class GrammarRelational {
 		}
 		return false;
 	}
-	
-	
+
 	public static void opRel() {
 
 		if (currentSymbol.getKind().equals(OP_REL)) {
@@ -79,77 +77,86 @@ public class GrammarRelational {
 					} else if (currentSymbol.getLexeme().equals(","))
 						return;
 					else {
-						System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+
+						throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
 								+ currentSymbol.getLexeme() + "\n expected: ==, op logic , or ;");
-						return;
+
 					}
 				}
 			}
 
 		} else {
 
-			System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+			throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
 					+ currentSymbol.getLexeme() + "\n expected: op relational");
-			return;
+
 		}
 	}
 
-	public static void opRelIf() {
-   
-		if(currentSymbol.getKind().equals(OP_REL)) {
-			
+	// operacao relacional inserindo um parâmentro para análise semântica
+	public static void opRelIf(Kind k) {
+
+		if (currentSymbol.getKind().equals(OP_REL)) {
+
 			System.out.print(currentSymbol.getLexeme() + " ");
 			nextToken();
 			openParentheses();
-			
-			if(currentSymbol.getKind().equals(ID) || 
-		       currentSymbol.getKind().equals(INT)||
-		       currentSymbol.getKind().equals(FLOAT)) {
-				
-				System.out.print(currentSymbol.getLexeme() + "  ");
+
+			if ((currentSymbol.getKind().equals(INT) && currentSymbol.getKind().equals(k))
+					|| (currentSymbol.getKind().equals(FLOAT) && currentSymbol.getKind().equals(k))
+					|| (currentSymbol.getKind().equals(ID) && currentSymbol.getIdKind().equals(k))) {
+
+				System.out.print(currentSymbol.getLexeme() + " ");
 				nextToken();
 				closeParentheses();
-				//podemos ler uma soma exemplo: id < id + id
-				//e quem sabe podemos ler um operador lógico
-				//se sim, a funçao expArithmAfterRel() ja retorna a partir do operador lógico
-				if(currentSymbol.getKind().equals(OP_ARITHM)) {
-					expArithmAfterRel();
+				// podemos ler uma soma exemplo: id < id + id
+				// e quem sabe podemos ler um operador lógico
+				// se sim, a funçao expArithmAfterRel() ja retorna a partir do operador lógico
+				if (currentSymbol.getKind().equals(OP_ARITHM)) {
+					expArithmAfterRel(k);
 					closeParentheses();
 				}
-				
-				//se for operador lógico mesmo sem ler uma exp com soma ex: id < id
-				//e ler um operador lógico, ok, chama o metodo abaixo para tratar
+
+				// se for operador lógico mesmo sem ler uma exp com soma ex: id < id
+				// e ler um operador lógico, ok, chama o metodo abaixo para tratar
 				boolean isRead = false;
-				if(currentSymbol.getKind().equals(OP_LOG)) {
-					opLogIf();
+				if (currentSymbol.getKind().equals(OP_LOG)) {
+					opLogIf(k);
 					isRead = true;
 				}
-				
-				//se ler algum simbolo relacional
-				//se eu não ler operador lógico então isRead fica falso, negado fica true então emite o erro. 
-				if(currentSymbol.getKind().equals(OP_REL) && !isRead) {
-					System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+
+				// se ler algum simbolo relacional
+				// se eu não ler operador lógico então isRead fica falso, negado fica true então
+				// emite o erro.
+				if (currentSymbol.getKind().equals(OP_REL) && !isRead) {
+
+					throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
 							+ currentSymbol.getLexeme() + "\n expected: op logic");
-					return;
+
 				}
-				
-				//como podemos não ler nenhum dos acima, e ser apenas id < id.
-				
-				if(balanceParentheses.peek().getLexeme().equals("$")) return;
+
+				// como podemos não ler nenhum dos acima, e ser apenas id < id.
+				if (balanceParentheses.peek().getLexeme().equals("$")) return;
 				else {
-					System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+					throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
 							+ currentSymbol.getLexeme() + "\n expected: ')'");
-					return;
 				}
-				
-			}else {
-				
-				System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
-						+ currentSymbol.getLexeme() + "\n expected: identifier");
-				return;
-			}	
+			} else {
+
+				if (!currentSymbol.getKind().equals(k) || !currentSymbol.getIdKind().equals(k)) {
+
+					throw new RuntimeException("\nSemantic error line -> " + currentSymbol.getLine() + "\n caused by: "
+							+ currentSymbol.getLexeme() + "\n expected: Kind " + k);
+
+				} else {
+
+					throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+							+ currentSymbol.getLexeme() + "\n expected: identifier ");
+
+				}
+			}
 		}
-				
+
 	}
 
 }

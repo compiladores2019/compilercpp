@@ -2,6 +2,7 @@ package br.ufc.compiler.parse;
 
 import java.util.Stack;
 
+
 import br.ufc.compiler.lexicon.Token;
 import br.ufc.compiler.lexicon.Token.Kind;
 
@@ -23,7 +24,7 @@ public class GrammarExpressions {
 	
 	static {
 
-		//InitParser();
+
 		balanceParentheses.push(new Token(OTHER, "$", "end-of-stack marking", null,currentSymbol.getLine()));
 		balanceParenthesesIf.push(new Token(OTHER, "$", "end-of-stack marking",null, currentSymbol.getLine()));
 
@@ -111,16 +112,16 @@ public class GrammarExpressions {
 				return;
 			} else {
 
-				System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+				throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
 						+ currentSymbol.getLexeme() + "\n expected: ')'");
-				return;
+				
 			}
 		} else if (currentSymbol.getLexeme().equals(",")) {
 			declaration();// leu vírgula, então é uma declaração? esperamos que smim
 		}
 	}
 
-	private static void validateExpressionIf() {
+	public static void validateExpressionIf() {
 
 		while (currentSymbol.getLexeme().equals(")") && balanceParenthesesIf.peek().getLexeme().equals("(")) {
 			System.out.println(currentSymbol.getLexeme() + " ");
@@ -135,9 +136,10 @@ public class GrammarExpressions {
 				// se a pilha estiver o cifrão então ok,o proximo ) será do if
 				return;
 			} else {
-				System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+				
+				throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
 						+ currentSymbol.getLexeme() + "\n expected: ')'");
-				return;
+				
 			}
 
 		} else {
@@ -155,12 +157,20 @@ public class GrammarExpressions {
 
 	}
 
-	public static void expression() {
+	//adicionando novo parâmetro para análise semântica 
+	public static void expression(Kind k) {
 
+		if(k == null) {
+	
+			throw new RuntimeException("\nSemantic error line -> " + currentSymbol.getLine() + "\n caused by: "
+					+ currentSymbol.getLexeme() + "\n expected: identifier no was declared : "+k);
+		}
+			
 		openParentheses();
 
-		if (currentSymbol.getKind().equals(ID) || currentSymbol.getKind().equals(INT)
-				|| currentSymbol.getKind().equals(FLOAT)) {
+		if ((currentSymbol.getKind().equals(INT) && currentSymbol.getKind().equals(k)) ||
+		    (currentSymbol.getKind().equals(FLOAT) &&  currentSymbol.getKind().equals(k))|| 
+		    (currentSymbol.getKind().equals(ID) && currentSymbol.getIdKind().equals(k))) {
 
 			System.out.print(currentSymbol.getLexeme() + " ");
 			nextToken();
@@ -173,28 +183,28 @@ public class GrammarExpressions {
 
 				openParentheses();
 
-				expression();
+				expression(k);
 
 			} else {
 
 				if (currentSymbol.getLexeme().matches("[,|;]")) {
-
+						
 					if (currentSymbol.getLexeme().equals(";") && balanceParentheses.peek().getLexeme().equals("$")) {
 						System.out.println(currentSymbol.getLexeme() + " ");
-						// nextToken();
+	                     
 						return;
+						
 					} else {
 
 						if (currentSymbol.getLexeme().equals(",")
 								&& balanceParentheses.peek().getLexeme().equals("$")) {
-							// clearStackParentheses();
+							
 							return;
 
 						} else {
-							// lançar uma exceção aqui
-							System.out.println("Syntax error line -> " + currentSymbol.getLine()
-									+ "\n cause by: missing ')' before " + currentSymbol.getLexeme());
-							return;
+						
+							throw new RuntimeException("Syntax error line -> " + currentSymbol.getLine()
+							     + "\n cause by: missing ')' before " + currentSymbol.getLexeme());
 						}
 					}
 				} else
@@ -204,7 +214,7 @@ public class GrammarExpressions {
 				if (currentSymbol.getKind().equals(OP_ARITHM)) {
 					System.out.print(currentSymbol.getLexeme() + " ");
 					nextToken();
-					expression();
+					expression(k);
 
 				} else if (currentSymbol.getLexeme().equals(")")) {
                            
@@ -215,12 +225,12 @@ public class GrammarExpressions {
 							nextToken();
 					}
 
-					if (currentSymbol.getLexeme().matches("[,|;]")
-							&& balanceParentheses.peek().getLexeme().equals("$")) {
+					if (currentSymbol.getLexeme().matches("[,|;]") && balanceParentheses.peek().getLexeme().equals("$")) {
+						
 						if (currentSymbol.getLexeme().equals(";")) {
 							System.out.println(currentSymbol.getLexeme() + " ");
-							// clearStackParentheses();
-							// nextToken();
+				
+							 nextToken();
 							return;
 						} else
 							return;
@@ -229,7 +239,7 @@ public class GrammarExpressions {
 						if (currentSymbol.getKind().equals(OP_ARITHM)) {
 							System.out.print(currentSymbol.getLexeme() + " ");
 							nextToken();
-							expression();
+							expression(k);
 
 						} else {
 
@@ -241,10 +251,10 @@ public class GrammarExpressions {
 
 							} else {
 
-								System.out.println("Syntax error line -> " + currentSymbol.getLine()
-										+ "\n cause by: missing operator arithmetic before "
-										+ currentSymbol.getLexeme());
-								return;
+								throw new RuntimeException("Syntax error line -> " + currentSymbol.getLine()
+								+ "\n cause by: missing operator arithmetic before "
+								+ currentSymbol.getLexeme());
+							
 							}
 						}
 					}
@@ -253,7 +263,7 @@ public class GrammarExpressions {
 					if (currentSymbol.getKind().equals(OP_REL)) {
 
 						opRel();
-						expression();
+						expression(k);
 
 					} else {
 
@@ -263,13 +273,19 @@ public class GrammarExpressions {
 							validateExpression();
 
 						} else {
-							System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+							
+							throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
 									+ currentSymbol.getLexeme() + "\n expected: , or ; or op arithm");
-							return;
+									
 						}
 					}
 				}
 			}
+		}else {
+			
+			throw new RuntimeException("\nSemantic error line -> " + currentSymbol.getLine() + "\n caused by: "
+									+ currentSymbol.getLexeme() + "\n expected kind: "+k);
+
 		}
 
 	}
@@ -277,61 +293,51 @@ public class GrammarExpressions {
 	public static void expressionIf() {
 
 		
-		   openParenthesesIf();
-		
 		if(currentSymbol.getKind().equals(FLOAT) ||
 		   currentSymbol.getKind().equals(INT) ||
-		   currentSymbol.getKind().equals(ID) ) {
+		   currentSymbol.getKind().equals(ID)) {
 			
-			System.out.print(currentSymbol.getLexeme() + " ");
-			nextToken();
-			expArithmBeforeRel();
-			//nextToken();
-			opLogIf();
-			opRelIf();
-			
-			closeParenthesesIf();
-			
+			 System.out.print(currentSymbol.getLexeme() + " ");
+
+			Kind idKind = currentSymbol.getIdKind();
+		    nextToken();
+			controlExpressionIf(idKind,currentSymbol.getKind());
+		
 		}
 		
-
 	}
 	
-	private static void anotherFunction(Kind kind) {
+	private static void controlExpressionIf(Kind kindId,Kind op) {
 		
-		switch(kind) {
+	
+		switch(op) {
 		
+		case OP_LOG:{
+			
+			opLogIf(kindId);
+	
+			controlExpressionIf(kindId,currentSymbol.getKind());
+			break;
+		}
 		case OP_REL:{
-			
-			//previousToken();
-			opRelIf();
-			//System.out.print(currentSymbol.getLexeme() + " ");
-			
-			break;
-			
-		}
-		
-		case OP_LOG:
-		{
-			
-			//previousToken();
-		    opLogIf();
-		    //System.out.print(currentSymbol.getLexeme() + " ");
-		   
-		    break;
-		}
-		
-		case OP_ARITHM:
-		{
-			//System.out.print(currentSymbol.getLexeme() + " entrei aqui? ");
 
-			expArithmBeforeRel();
-			
-		
+			opRelIf(kindId);
+			controlExpressionIf(kindId,currentSymbol.getKind());
 			break;
-		}		
+		}
+		
+		case OP_ARITHM:{
+		
+			expArithmBeforeRel(kindId);
+			controlExpressionIf(kindId,currentSymbol.getKind());
+			
+			break;
+		}
+			
 		default:
-					
+			break;
+		
+		
 		}
 		
 	}

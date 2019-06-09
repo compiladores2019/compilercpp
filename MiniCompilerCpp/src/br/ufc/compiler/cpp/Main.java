@@ -17,6 +17,9 @@ import javax.swing.table.DefaultTableModel;
 import br.ufc.compiler.lexicon.LexiconAnalyzer;
 import br.ufc.compiler.lexicon.Token;
 import br.ufc.compiler.lexicon.Token.Kind;
+import br.ufc.compiler.parse.Analyze;
+import static br.ufc.compiler.parse.Parser.*;
+import static br.ufc.compiler.parse.Analyze.*;
 
 public class Main {
 
@@ -40,12 +43,12 @@ public class Main {
 		
 		//System.out.println(ln.getSymbolTable());
 
-		//Analyze.start(); //realiza a análise sintática
-	 	//LexiconAnalyzer.getSymbolTable().clear(); //limpando a tabela dos tokens
-     	//Parser.destroy(); // limpando array e resetando a posição do apontador de índice
+		 start(); //realiza a análise sintática
+	 	 LexiconAnalyzer.getSymbolTable().clear(); //limpando a tabela dos tokens
+     	 destroy(); // limpando array e resetando a posição do apontador de índice
 
 
-        	JFrame window = new JFrame("Symbol Table");
+        	/*JFrame window = new JFrame("Symbol Table");
 			JPanel panel = new JPanel();
 			window.add(panel);
 			window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,7 +73,7 @@ public class Main {
 			window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			window.setVisible(true);
 			scroll.setVisible(true);
-
+   */
       
 
 		//}

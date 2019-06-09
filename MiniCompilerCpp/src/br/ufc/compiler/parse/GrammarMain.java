@@ -1,9 +1,10 @@
 package br.ufc.compiler.parse;
 
-import static br.ufc.compiler.lexicon.Token.Kind.INT;
-import static br.ufc.compiler.lexicon.Token.Kind.MAIN;
+import static br.ufc.compiler.lexicon.Token.Kind.*;
+import static br.ufc.compiler.lexicon.Token.Kind;
 import static br.ufc.compiler.parse.Parser.currentSymbol;
 import static br.ufc.compiler.parse.Parser.nextToken;
+
 import static br.ufc.compiler.parse.GrammarIf.*;
 import static br.ufc.compiler.parse.Parser.*;
 import static br.ufc.compiler.parse.GrammarKind.*;
@@ -11,7 +12,7 @@ import static br.ufc.compiler.parse.GrammarKind.*;
 public class GrammarMain {
 
 	static {
-		InitParser();
+		InitParser(); // aloca a tabela de simbolos para análise sintática/semântica
 	}
 
 	// algumas coiasas incompletas
@@ -36,21 +37,91 @@ public class GrammarMain {
 						if (currentSymbol.getLexeme().equals("{")) {
 							System.out.println(currentSymbol.getLexeme() + " ");
 							nextToken();
-						
-							kind();
-							attribuition();
-							commandIf();
-
+					
+					        controlMain();
+					       
 							if (currentSymbol.getLexeme().equals("}")) {
 								System.out.println(currentSymbol.getLexeme() + " ");
+							}else {
+								throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+						                                     + currentSymbol.getLexeme() + "\n expected: }");
 							}
 							
+						}else {
+							throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+                                    + currentSymbol.getLexeme() + "\n expected: {");
 						}
+					}else {
+						throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+                                + currentSymbol.getLexeme() + "\n expected: )");
 					}
+				}else {
+					throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+                            + currentSymbol.getLexeme() + "\n expected: (");
 				}
+			}else {
+				throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+                        + currentSymbol.getLexeme() + "\n expected: main");
 			}
 
+		}else {
+			throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+                    + currentSymbol.getLexeme() + "\n expected: int");
 		}
 
+	}
+	
+	public static void controlMain() {
+		
+		Kind k = currentSymbol.getKind();
+		
+			switch(k) {	
+			
+			case IF:{
+
+				commandIf();
+				k = currentSymbol.getKind();
+				controlMain();
+				
+				break;
+				
+			}
+			case ID:{
+		
+				attribuition();		
+				nextToken();
+				k = currentSymbol.getKind();
+				controlMain();
+				break;
+				
+			}
+			case INT:{
+				
+				kind();
+				k = currentSymbol.getKind();
+				controlMain();
+				break;
+				
+			}
+			case FLOAT	:{
+		
+				kind();
+				k = currentSymbol.getKind();
+				controlMain();
+				break;
+				
+			}
+			case CHAR:{
+				
+				kind();
+				k = currentSymbol.getKind();
+				controlMain();
+				break;	
+			}		
+	
+			default:
+				break;
+					
+		}	
 	}
 }

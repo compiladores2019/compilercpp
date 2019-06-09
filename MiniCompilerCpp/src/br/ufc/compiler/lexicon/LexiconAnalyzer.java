@@ -1,10 +1,6 @@
 package br.ufc.compiler.lexicon;
 
-import static br.ufc.compiler.lexicon.Token.Kind.CHAR;
-import static br.ufc.compiler.lexicon.Token.Kind.FLOAT;
-import static br.ufc.compiler.lexicon.Token.Kind.ID;
-import static br.ufc.compiler.lexicon.Token.Kind.INT;
-import static br.ufc.compiler.lexicon.Token.Kind.OTHER;
+import static br.ufc.compiler.lexicon.Token.Kind.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,8 +15,9 @@ import br.ufc.compiler.lexicon.Token.Kind;
 
 public class LexiconAnalyzer {
 
-	private static Set <Token> hm = new LinkedHashSet<>();
-	private static Map<String,Kind> idents = new HashMap<>(); 
+	private static Set<Token> hm = new LinkedHashSet<>();
+	private static Map<String, Kind> idents = new HashMap<>();
+
 	private StringBuilder sb = new StringBuilder();
 	private StringBuilder textBuilder = new StringBuilder();
 	private SymbolConsumer sc = new SymbolConsumer(hm);
@@ -56,11 +53,11 @@ public class LexiconAnalyzer {
 
 		if (isText)
 			System.out.println("string couldn't find end of text in line: " + stringUnboundedRow);
-	
-		if(!commentActivated && !isText) {
-		     setKindIdentifiers();
+
+		if (!commentActivated && !isText) {
+			setKindIdentifiers();
 		}
-		
+
 	}
 
 	private void collectLines(String line, int row) {
@@ -95,11 +92,11 @@ public class LexiconAnalyzer {
 					verifyLexeme(row);
 					sc.treatmentDelimiter(c, row);
 				} else if (Util.isOther(ch)) {
-					hm.add(new Token(Kind.OTHER, ch, "OTHER",null, row));
+					hm.add(new Token(Kind.OTHER, ch, "OTHER", null, row));
 					sb.setLength(0);
-				}else 
-		
-				isAlpha = Character.isLetter(c);
+				} else
+
+					isAlpha = Character.isLetter(c);
 				isNumber = Character.isDigit(c);
 				isUnderScore = (c == '_') ? true : false;
 				isDot = (c == '.') ? true : false;
@@ -108,11 +105,11 @@ public class LexiconAnalyzer {
 				if (isAlpha || isNumber || isUnderScore || isDot || isApostrophe) {
 					sb.append(c);
 					isAlpha = isNumber = isUnderScore = isDot = isApostrophe = false;
-				}else{
+				} else {
 
-					if(Util.isUnknow(ch) && c !='"') 
-						hm.add(new Token(Kind.OTHER, ch, "UNKNOW",null, row));
-						
+					if (Util.isUnknow(ch) && c != '"')
+						hm.add(new Token(Kind.OTHER, ch, "UNKNOW", null, row));
+
 					verifyLexeme(row);
 				}
 
@@ -121,7 +118,7 @@ public class LexiconAnalyzer {
 			} else if (c == '"') {
 				isText = false;
 				textBuilder.append('"');
-				hm.add(new Token(Kind.STRING, textBuilder.toString(), '"' + "abc" + '"', "STRING",null, row));
+				hm.add(new Token(Kind.STRING, textBuilder.toString(), '"' + "abc" + '"', "STRING", null, row));
 				textBuilder.setLength(0);
 			} else if (!commentActivated)
 				verifyLexeme(row);
@@ -140,85 +137,98 @@ public class LexiconAnalyzer {
 			sc.treatmentRW(sb, row);
 		else if (Util.isModifier(lexeme))
 			sc.treamentmentModifier(sb, row);
-		else if(Util.isNumberInteger(lexeme) || Util.isNumberFloat(lexeme))
+		else if (Util.isNumberInteger(lexeme) || Util.isNumberFloat(lexeme))
 			sc.treatmentNumbers(sb, row);
 		else if (Util.isNotIdentifier(lexeme) || Util.isIdentifier(lexeme) || Util.isLetter(lexeme))
 			sc.treatmentIndetifier(sb, row);
-	
+
 	}
 
+	//responsável por fazer a tipagem dos identificadores da linguagem
+	//baseado em alguns critérios
 	private void setKindIdentifiers() {
-	
-		Set <Token> hmTemp = hm;
-		
+
 		Kind kind = null;
 		boolean isAttrib = false;
-        boolean isKind = false;
-		
-		for(Token t: hmTemp) {
-			
-			if((t.getKind().equals(CHAR) ||
-			    t.getKind().equals(INT)  ||
-			    t.getKind().equals(FLOAT)) && !isKind){
-					
-				kind = t.getKind();
-				isKind = true;
-			}
-			
-			Kind kindId = idents.get(t.getLexeme());
-			boolean contains = idents.containsKey(t.getLexeme());
-			
-			if(contains){
-				
-				 if(t.getIdKind() == null){
-					//System.out.println("antes: "+t.getLexeme() + " "+kindId + " "  +t.getLine());
-					 t.setIdKind(kindId);
-					 //System.out.println("depois: "+t.getLexeme() + " "+t.getIdKind()+ " " + t.getLine());
-				 }
-			}
-			
-			if(!t.getKind().equals(kind)) {
-		
-				if(t.getLexeme().equals("="))
-					isAttrib = true;
-				
-				if(t.getKind().equals(ID) && !isAttrib) {
-				
-					t.setIdKind(kind);
-					idents.put(t.getLexeme(),kind);
-				}				
-				
-				if(isAttrib){
-					
-					if(idents.containsKey(t.getLexeme())){
-						
-						if(t.getIdKind() == null){
-							t.setIdKind(idents.get(t.getLexeme()));
-						}
-						
-					}
+		boolean isKind = false;
+		int count = 0;
+
+		for (Token t : hm) {
+
+			if ((t.getKind().equals(CHAR) && t.getLexeme().equals("char")
+					|| t.getKind().equals(INT) && t.getLexeme().equals("int")
+					|| t.getKind().equals(FLOAT) && t.getLexeme().equals("float")) && !isKind) {
+
+				//o primiero kind é int, mas ele é do main, ou seja, se ele ter outro kind apos main,
+				//podemos considerar como um tipo
+				if (count > 0) {
+					kind = t.getKind();
+					isKind = true;
 				}
-				
-				if(t.getLexeme().equals(",")) {
+				count++;
+			}
+
+			if (t.getLexeme().equals(",")) {
+				isAttrib = false;
+
+			} else {
+
+				if (t.getLexeme().equals(";")) {
+
+					//fim de comando, apos isso a declaração já terminou e o tipo fica null
+					kind = null;
+					isKind = false;
 					isAttrib = false;
-					
-				}else {
-					
-					if(t.getLexeme().equals(";")) {
-						
-						kind = null;
-						isKind = false;
-						isAttrib = false;
+				}
+
+			}
+
+			if (t.getLexeme().equals("="))
+				isAttrib = true;
+
+			if (t.getKind().equals(ID) && !isAttrib) {
+
+				// insiro todos os identificadores na tabela, mas apenas se não existirem na
+				// tabela
+				if (!idents.containsKey(t.getLexeme())) {
+					idents.put(t.getLexeme(), kind);
+				}
+
+				//se o elemento já existe, posso ler o mesmo simbolo novamente, talvez em uma atribuição qualquer
+				//nesse caso apenas atualizo o tipo dele 
+				if (idents.get(t.getLexeme()) != null) {
+
+					t.setIdKind(idents.get(t.getLexeme()));
+
+				} else {
+                   //se o token não existe e o kind é diferente de null,
+					//podemos inserir ele na hashMap, e atualizar o tipo dele com o kind
+					if (kind != null) {
+						t.setIdKind(kind);
+						idents.put(t.getLexeme(), kind);
 					}
 				}
-				
+
 			}
-		
+
+			//a atribuição esta ativada, ou seja, apenas vamos consultar a hashMap se o lexema já existe,
+			//se sim, ele vai colocar o tipo no token,pois o id já foi declarado antes.
+			if (isAttrib) {
+
+				if (idents.containsKey(t.getLexeme())) {
+
+					if (t.getIdKind() == null) {
+						t.setIdKind(idents.get(t.getLexeme()));
+					}
+
+				}
+			}
+
 		}
-				
+
+		System.out.println(idents);
 	}
-	
-	
+
 	public static Set<Token> getSymbolTable() {
 		return hm;
 	}

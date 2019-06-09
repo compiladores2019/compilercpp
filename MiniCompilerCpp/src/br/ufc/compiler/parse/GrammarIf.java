@@ -14,13 +14,13 @@ public class GrammarIf {
 	private static Stack<Token> balanceKey = new Stack<>();
 
 	static {
-		//InitParser();
+		
 		balanceKey.push(new Token(OTHER,"$","end-marking-stack",null,currentSymbol.getLine()));
 		
 	}
 	
 	public static void commandIf() {
-		ifError();
+		ifCommand();
 	}
 
 
@@ -37,7 +37,7 @@ public class GrammarIf {
       private static boolean closeKey() {
     	  
     	  if(currentSymbol.getLexeme().equals("}") && balanceKey.peek().getLexeme().equals("{")) {
-    		  System.out.print(currentSymbol.getLexeme() + " ");
+    		  System.out.println(currentSymbol.getLexeme() + " ");
     		  balanceKey.pop();
     		  nextToken();
     		  return true;
@@ -46,7 +46,9 @@ public class GrammarIf {
     	  return false;
 	}
 	
-	public static void ifError() {
+      
+    //para a regra do if, é obrigatorio o uso do else
+	public static void ifCommand() {
 
 		if (currentSymbol.getKind().equals(IF)) {
 			System.out.print(currentSymbol.getLexeme() + " ");
@@ -56,21 +58,20 @@ public class GrammarIf {
 				 System.out.print(currentSymbol.getLexeme() + " ");
 				 nextToken();
 				 expressionIf();
-			     
+				 
 				if (currentSymbol.getLexeme().equals(")")) {
 					
-					System.out.print(currentSymbol.getLexeme() + " ");
+					System.out.print(currentSymbol.getLexeme() + "  ");
 					nextToken();
 
 					if (currentSymbol.getLexeme().equals("{")) {
-						 
+				
 						openKey();
-						
-						//System.out.println();
-					    GrammarKind.kind();
-					      
+			
+						GrammarMain.controlMain();
+					     
 					       if(currentSymbol.getKind().equals(IF)) 
-					    	     ifError(); 
+					    	   ifCommand(); 
 					  
 					       
 					else {
@@ -84,42 +85,53 @@ public class GrammarIf {
 						      if(currentSymbol.getLexeme().equals("{")) {
 						    	  
 						    	  openKey();
-						    	  System.out.println();
+						    	  GrammarMain.controlMain();
 						    	  
 						    	  if(currentSymbol.getKind().equals(IF)) {
-						    		  ifError();
-						    		  //nextToken();
-						    	     //comand
-						    	    //atribs
-						    	   //other
+						    		  ifCommand();
+						              
 						    	  }
 						    	  
 						    	  if(currentSymbol.getLexeme().equals("}")) {
-						    		  ///System.out.print("ao menos entra aqui?");
+						  
 						    		  parenthesesRemove();
+						    	  }else {
+						    		  throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+					                            + currentSymbol.getLexeme() + "\n expected: }");
 						    	  }
 						    	  
-						      }
+						      }else throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+			                            + currentSymbol.getLexeme() + "\n expected: {");
 						      
-						    }
-						   
-					     }
+						    }else 
+						    	throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+			                            + currentSymbol.getLexeme() + "\n expected: else");			   
+					   }
+					       
+					}else
+						throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+                            + currentSymbol.getLexeme() + "\n expected: {");
 					
-					}					
-				}
+				}else 
+					throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+                        + currentSymbol.getLexeme() + "\n expected: )");
+			}else {
+				throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+                        + currentSymbol.getLexeme() + "\n expected: (");
 			}
 		}
 		if(balanceKey.peek().getLexeme().equals("$")) return;
 		else {
 			previousToken();
-			System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+			
+			throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
 					+ currentSymbol.getLexeme() + "\n expected: missing '}' block key");
-			return;
+	
 		}
     }
 	
 	private static void parenthesesRemove() {
-	
+
 		   while(currentSymbol.getLexeme().equals("}") && balanceKey.peek().getLexeme().equals("{")) {
 			    
 		    	if(closeKey()) continue;

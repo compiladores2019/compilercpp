@@ -35,8 +35,8 @@ public class Token {
 		return kind;
 	}
 
-	public void setIdKind(Kind kind) {
-		this.idKind = kind;
+	public void setIdKind(Kind idKind) {
+		this.idKind = idKind;
 	}
 
 	public Kind getIdKind() {

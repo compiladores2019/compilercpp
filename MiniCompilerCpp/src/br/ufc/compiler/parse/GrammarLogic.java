@@ -1,7 +1,6 @@
 package br.ufc.compiler.parse;
 
 import static br.ufc.compiler.lexicon.Token.Kind.*;
-import static br.ufc.compiler.parse.Parser.InitParser;
 import static br.ufc.compiler.parse.Parser.currentSymbol;
 import static br.ufc.compiler.parse.Parser.*;
 import static br.ufc.compiler.parse.GrammarArithm.*;
@@ -10,14 +9,14 @@ import static br.ufc.compiler.parse.GrammarRelational.*;
 import java.util.Stack;
 
 import br.ufc.compiler.lexicon.Token;
+import br.ufc.compiler.lexicon.Token.Kind;
 
 public class GrammarLogic {
 
 private static Stack<Token> balanceParentheses = new Stack<>();
 	
 	static {
-	
-		//InitParser();
+
 		balanceParentheses.push(new Token(OTHER, "$", "end-of-stack marking",null, currentSymbol.getLine()));
 
 	}
@@ -66,33 +65,36 @@ private static Stack<Token> balanceParentheses = new Stack<>();
 				}
 
 			} else {
-				System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+				
+				throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
 						+ currentSymbol.getLexeme() + "\n expected: identifier or , or ;");
-				return;
+			
 			}
 
 		} else {
 
 			if (currentSymbol.getLexeme().equals(";")) {
 				System.out.print(currentSymbol.getLexeme() + " ");
-				// nextToken();
 				return;
+				
 			} else if (currentSymbol.getLexeme().equals(","))
 				return;
+			
 			else {
 				if (currentSymbol.getLexeme().equals(")"))
 					return;
 				else {
-					System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
+					throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n cause by: "
 							+ currentSymbol.getLexeme() + "\n expected: op logic");
-					return;
+				
 				}
 			}
 		}
 
 	}
 
-	public static void opLogIf() {
+	//operaccao logica inserindo um novo parâmetro para anáslie semântica
+	public static void opLogIf(Kind k) {
 
 	  if(currentSymbol.getKind().equals(OP_LOG)) {
 		  
@@ -100,9 +102,9 @@ private static Stack<Token> balanceParentheses = new Stack<>();
 		  nextToken();
 		  openParentheses();
 		  
-		  if(currentSymbol.getKind().equals(ID) || 
-		     currentSymbol.getKind().equals(INT)||
-		     currentSymbol.getKind().equals(FLOAT)) {
+		  if((currentSymbol.getKind().equals(INT) && currentSymbol.getKind().equals(k)) ||
+		     (currentSymbol.getKind().equals(FLOAT) &&  currentSymbol.getKind().equals(k))|| 
+		     (currentSymbol.getKind().equals(ID) && currentSymbol.getIdKind().equals(k))) {
 		  
 			  closeParentheses();
 			  
@@ -114,26 +116,26 @@ private static Stack<Token> balanceParentheses = new Stack<>();
 				  
 				  
 				  while(currentSymbol.getKind().equals(OP_ARITHM)) {
-					  expArithmBeforeRel();
+					  expArithmBeforeRel(k);
 					  closeParentheses();
 				  }
 			 
 				
 				  if(currentSymbol.getKind().equals(OP_REL)){ 	 
-					   opRelIf();  
+					   opRelIf(k);  
 					   closeParentheses();
 					   
 				  if(currentSymbol.getKind().equals(OP_LOG)) { 
-					  opLogIf();
+					  opLogIf(k);
 					  closeParentheses();
 				  }
 				
 				  
 				  }else{
 					  //erro? 
-						System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+					  throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
 								+ currentSymbol.getLexeme() + "\n expected: op relational after INT or FLOAT");
-						return;
+					
 				  }
 				  
 			  }else {
@@ -144,32 +146,43 @@ private static Stack<Token> balanceParentheses = new Stack<>();
 				    closeParentheses();
 			    
 				    while(currentSymbol.getKind().equals(OP_ARITHM)) {
-						  expArithmBeforeRel();
+						  expArithmBeforeRel(k);
 						  closeParentheses();
 					  }
 				    
 				    if(currentSymbol.getKind().equals(OP_REL)){ 	 
-						   opRelIf(); 
+						   opRelIf(k); 
 						   closeParentheses();
 				    }
 				    
 				    if(currentSymbol.getKind().equals(OP_LOG)) {
-				    	opLogIf();
+				    	opLogIf(k);
 				    	closeParentheses();
 				    	
 				    }else{
 				    	
 				    	if(balanceParentheses.peek().getLexeme().equals("$")) return;
 				    	else {
-				    		System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+				    		
+				    		throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
 									+ currentSymbol.getLexeme() + "\n expected: ')'");
-							return;
 				    	}	
 				    }
 			  }
 
 		  }else {
-			  System.out.println("erorooo");
+			  
+				if(!currentSymbol.getKind().equals(k) || !currentSymbol.getIdKind().equals(k)) {
+					
+					throw new RuntimeException("\nSemantic error line -> " + currentSymbol.getLine() + "\n caused by: "
+							+ currentSymbol.getLexeme() + "\n expected: Kind "+k);
+				
+				}else {
+					
+					throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+							+ currentSymbol.getLexeme() + "\n expected: identifier ");
+		
+				}
 	
 		  }
 	  }

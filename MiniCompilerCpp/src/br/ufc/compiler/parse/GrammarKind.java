@@ -2,6 +2,7 @@ package br.ufc.compiler.parse;
 
 import java.util.Stack;
 
+import  br.ufc.compiler.lexicon.Token.Kind;
 import static br.ufc.compiler.lexicon.Token.Kind.*;
 import static br.ufc.compiler.parse.GrammarExpressions.*;
 import static br.ufc.compiler.parse.Parser.*;
@@ -10,7 +11,8 @@ import br.ufc.compiler.lexicon.Token;
 public class GrammarKind {
 
 	private static Stack<Token> balance = new Stack<>();
-    private static int isAttrib = 0;
+ 
+    private static Kind k;
 	
 	static {
 		
@@ -47,92 +49,118 @@ public class GrammarKind {
 		if (currentSymbol.getKind().equals(INT) || currentSymbol.getKind().equals(CHAR)
 				|| currentSymbol.getKind().equals(FLOAT)) {
 
+			k = currentSymbol.getKind();
+			
 			System.out.print(currentSymbol.getLexeme() + " ");
 			nextToken();
-
-
-			if (currentSymbol.getKind().equals(ID)) {
+			
+			if (currentSymbol.getKind().equals(ID)){
+				
 				System.out.print(currentSymbol.getLexeme() + " ");
+	
 				nextToken();
-				if (Parser.currentSymbol.getLexeme().equals("=")) {
+				
+				if (currentSymbol.getLexeme().equals("=")) {
+				
 					declaration();
-					nextToken();
+					
+				
+				}else {
+					
+					if(currentSymbol.getLexeme().matches("[,|;]")){
+						declaration();	
+					}		
 				}
+				
 			} else {
-				System.out.println("Erro sintático -> Linha " + currentSymbol.getLine());
+				
+				throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+						+ currentSymbol.getLexeme() + "\n expected: "+k);
+				
 			}
 		}
 
 	}
 	
-  //parei aqui
 	public static void attribuition() {
 
+		
 		if (currentSymbol.getKind().equals(ID)) {
-			System.out.print(currentSymbol.getLexeme() + " ");
+	
+			k = currentSymbol.getIdKind();
+			System.out.print(currentSymbol.getLexeme() + " ");	
+		
 			nextToken();
-		 
 		 
 		 if(currentSymbol.getLexeme().equals("=")) {
 			 System.out.print(currentSymbol.getLexeme() + " ");
 			 nextToken();
-			 expression();
-			 
-			 nextToken();
+			 expression(k);
 			 
 		 }else {
-			 System.out.println("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
+			 
+			 throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine() + "\n caused by: "
 						+ currentSymbol.getLexeme() + "\n expected: =");
-				 return;
+			 
 		 }
 		 
 		}
 
 	}
 
+
 	public static void declaration() {
 
-		// falta achar uma forma de tratar o caso quando não tem o ; no final
 
 		if (currentSymbol.getLexeme().equals(",")) {
 
 			System.out.print(currentSymbol.getLexeme() + " ");
 			nextToken();
 			if (currentSymbol.getKind().equals(ID)) {
+				
+				k = currentSymbol.getIdKind();
+				
 				System.out.print(currentSymbol.getLexeme() + " ");
 				nextToken();
+				
 				if (currentSymbol.getLexeme().equals("=")) {
+					
 					System.out.print(currentSymbol.getLexeme() + " ");
+					nextToken();					
+					expression(k);
 					nextToken();
-					expression();
+					
 					if (currentSymbol.getLexeme().equals(","))
 						declaration();
 				} else
 					declaration();
 
 			} else {
-
-				System.out.println(
-						"Syntax error line -> " + currentSymbol.getLine() + "\ncause by: " + currentSymbol.getLexeme());
-				return;
-			}
+				
+           throw new RuntimeException("Syntax error line -> " + currentSymbol.getLine() + "\ncause by: " + currentSymbol.getLexeme());
+				
+	 }
 		} else {
 
 			if (currentSymbol.getLexeme().equals(";")) {
-				// nextToken();
-				// kind();
+				System.out.print(currentSymbol.getLexeme() + " ");
+				k = null;
+			    nextToken();
 				return;
 			} else if (currentSymbol.getLexeme().equals("=")) {
 
 				System.out.print(currentSymbol.getLexeme() + " ");
 				nextToken();
-				expression();
+				expression(k);
 
 				if (currentSymbol.getLexeme().equals(",")) {
 					declaration();
 				} else if (currentSymbol.getLexeme().equals(";")) {
-					// nextToken();
+				
+					k = null;
+					nextToken();
 					return;
+					
 				} else if (currentSymbol.getKind().equals(ID) || currentSymbol.getKind().equals(INT)
 						|| currentSymbol.getKind().equals(FLOAT) || currentSymbol.getKind().equals(LETTER)) {
 
@@ -140,13 +168,15 @@ public class GrammarKind {
 					declaration();
 
 				} else {
-					System.out.println("Declaration error:\nSyntax error line -> " + currentSymbol.getLine()
+					
+					throw new RuntimeException("Declaration error:\nSyntax error line -> " + currentSymbol.getLine()
 							+ "\ncause by: " + currentSymbol.getLexeme());
-					return;
+					
 				}
 
-			} else
-				System.out.println("erroooooo");
+			}else
+				throw new RuntimeException("Declaration error:\nSyntax error line -> " + currentSymbol.getLine()
+				+ "\ncause by: " + currentSymbol.getLexeme());
 		}
 	}
 
