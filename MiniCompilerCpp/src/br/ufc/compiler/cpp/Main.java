@@ -73,8 +73,8 @@ public class Main {
 			window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			window.setVisible(true);
 			scroll.setVisible(true);
-   */
-      
+   
+      */
 
 		//}
 

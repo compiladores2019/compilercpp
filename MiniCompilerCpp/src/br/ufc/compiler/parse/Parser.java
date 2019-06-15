@@ -25,15 +25,13 @@ public class Parser {
 
 		array = new ArrayList<Token>();
 		array.addAll(LexiconAnalyzer.getSymbolTable());
-		array.add(new Token(OTHER,"$","end-marking-stack",null,0));
+		array.add(new Token(OTHER, "$", "end-marking-stack", null, 0));
 		currentSymbol = array.get(position);
 		position++;
-
 	}
 
 	public static void nextToken() {
 
-	
 		if (position < array.size()) {
 			currentSymbol = array.get(position);
 			position++;
@@ -53,6 +51,5 @@ public class Parser {
 	public static int getPosition() {
 		return position;
 	}
-
 
 }
