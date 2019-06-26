@@ -60,7 +60,7 @@ public class GrammarKind {
 				if (!GrammarMain.scopeElement.isEmpty()
 						&& GrammarMain.scopeElement.peek().contains(currentSymbol.getLexeme()))
 					throw new RuntimeException("\nSyntax error line -> " + currentSymbol.getLine()
-							+ "\ncaused by an existing element: " + currentSymbol.getLexeme() + "\n expected: " + k);
+							+ "\ncaused by an existing element: " + currentSymbol.getIdKind());
 				else
 					GrammarMain.scopeElement.peek().add(currentSymbol.getLexeme());
 

@@ -1,11 +1,18 @@
 int main(){
 
-int a = 6;
+int a,b,c,d;
 
-int x = a + 5,m,n,f,y = 7;
+int x = a + b + c; 
+d = c + d;
+int z = a + c * b - c * d + b - c * d;
 
-int a;
-
-float k,l,k,h = 5.0 + 8.0;
+if( a > b )
+{
+b = a / z * d + c;
+}
+else
+{
+int x = b + c;
+}
 
 }

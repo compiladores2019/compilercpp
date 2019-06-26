@@ -101,7 +101,9 @@ public class GrammarIf {
 
 									if (currentSymbol.getLexeme().equals("}")) {
 
-										GrammarMain.scopeElement.pop();
+										if(!GrammarMain.scopeElement.empty())
+										    GrammarMain.scopeElement.pop();
+										
 										parenthesesRemove();
 
 									} else {
